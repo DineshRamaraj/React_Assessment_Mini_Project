@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import {Component} from 'react'
 import Header from '../Header'
 import './index.css'
@@ -7,17 +8,37 @@ class Assessment extends Component {
     questionList: [],
     answerScore: 0,
     unAnswerScore: 10,
+    displayTime: 0,
+  }
+
+  componentDidMount() {
+    this.getQuestionsList()
+  }
+
+  getQuestionsList = async () => {
+    const apiUrl = 'https://apis.ccbp.in/assets/questions'
+    const jwtToken = Cookies.get('jwt_token')
+    const options = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }
+
+    const response = await fetch(apiUrl, options)
+    const data = await response.json()
+    console.log(data)
   }
 
   render() {
-    const {answerScore, unAnswerScore, questionList} = this.state
+    const {answerScore, unAnswerScore, questionList, displayTime} = this.state
     return (
       <>
         <Header />
         <div className="assessment-container">
           <div className="time-container">
             <p className="time-title">Time Left</p>
-            <p className="display-time">00:10:00</p>
+            <p className="display-time">{displayTime}</p>
           </div>
           <div className="answer-details-container">
             <div className="answered-questions">
