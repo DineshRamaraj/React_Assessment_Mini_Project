@@ -1,19 +1,6 @@
 import Cookies from 'js-cookie'
 import {Component} from 'react'
-import {
-  LoginContainer,
-  WebsiteImage,
-  FormContainer,
-  InputContainer,
-  Label,
-  Input,
-  CheckBoxContainer,
-  CheckBox,
-  CheckBoxLabel,
-  LoginButtonContainer,
-  LoginButton,
-  ErrorMessage,
-} from './styledComponents'
+import './index.css'
 
 class Login extends Component {
   state = {
@@ -64,47 +51,59 @@ class Login extends Component {
   render() {
     const {userNameInput, passwordInput, isChecked, errorMsg} = this.state
     return (
-      <LoginContainer>
-        <WebsiteImage
+      <div className="login-container">
+        <img
+          className="website-image"
           src="https://res.cloudinary.com/dhwz560kk/image/upload/v1711469841/cmrmts52jkfj695vohx6.png"
           alt="login website logo"
         />
-        <FormContainer onSubmit={this.submitForm}>
-          <InputContainer>
-            <Label htmlFor="username">USERNAME</Label>
-            <Input
+        <form className="form-container" onSubmit={this.submitForm}>
+          <div className="input-container">
+            <label className="label" htmlFor="username">
+              USERNAME
+            </label>
+            <input
+              className="input"
               id="username"
               type="text"
               placeholder="Enter Your Name"
               value={userNameInput}
               onChange={this.changeUserName}
             />
-          </InputContainer>
-          <InputContainer>
-            <Label htmlFor="password">PASSWORD</Label>
-            <Input
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="password">
+              PASSWORD
+            </label>
+            <input
+              className="input"
               id="password"
               type={isChecked ? 'text' : 'password'}
               placeholder="Enter Your Password"
               value={passwordInput}
               onChange={this.changePassword}
             />
-          </InputContainer>
-          <CheckBoxContainer>
-            <CheckBox
+          </div>
+          <div className="checkbox-container">
+            <input
               type="checkbox"
               id="showPassword"
+              className="checkbox"
               checked={isChecked}
               onChange={this.changeShowPassword}
             />
-            <CheckBoxLabel htmlFor="showPassword">Show Password</CheckBoxLabel>
-          </CheckBoxContainer>
-          <LoginButtonContainer>
-            <LoginButton type="submit">Login</LoginButton>
-          </LoginButtonContainer>
-          <ErrorMessage>{errorMsg}</ErrorMessage>
-        </FormContainer>
-      </LoginContainer>
+            <label className="checkbox-label" htmlFor="showPassword">
+              Show Password
+            </label>
+          </div>
+          <div className="login-button-container">
+            <button type="submit" className="login-button">
+              Login
+            </button>
+          </div>
+          <p className="error-message">{errorMsg}</p>
+        </form>
+      </div>
     )
   }
 }

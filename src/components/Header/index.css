@@ -1,0 +1,23 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  background-color: #263868;
+  padding: 0 30px;
+}
+
+.header-logo {
+  width: 80px;
+}
+
+.logout-button {
+  font-size: 14px;
+  font-family: 'Roboto';
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 20px;
+  background-color: transparent;
+}

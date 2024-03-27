@@ -1,0 +1,135 @@
+.assessment-container {
+  padding: 15px;
+}
+
+.time-container {
+  background-color: #475987;
+  padding: 2px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.time-title {
+  color: #f8fafc;
+  font-family: 'Roboto';
+  font-size: 24px;
+  margin: 0;
+}
+
+.display-time {
+  color: #f8fafc;
+  font-size: 24px;
+  font-family: 'Roboto';
+}
+
+.answer-details-container {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 5px 5px 5px #dae4fa80;
+  margin-top: 10px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  padding-bottom: 30px;
+}
+
+.answered-questions {
+  display: flex;
+  align-items: center;
+}
+
+.answer-score-container {
+  background-color: #7c599f;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.answer-score {
+  color: #f8fafc;
+  font-family: 'Roboto';
+  font-size: 18px;
+}
+
+.answer-title {
+  color: #496387;
+  font-size: 18px;
+  font-family: 'Roboto';
+  margin-left: 10px;
+}
+
+.un-answered-questions {
+  display: flex;
+  align-items: center;
+}
+
+.un-answer-score-container {
+  background-color: transparent;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+}
+
+.un-answer-score {
+  color: #64748b;
+  font-family: 'Roboto';
+  font-size: 18px;
+}
+
+.un-answer-title {
+  color: #496387;
+  font-size: 18px;
+  font-family: 'Roboto';
+  margin-left: 10px;
+}
+
+.horizontal-line {
+  border: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.question-topic {
+  font-size: 24px;
+  font-family: 'Roboto';
+  color: #164687;
+}
+
+.questions-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  list-style: none;
+}
+
+.questions-item {
+  border: 1px solid #e2e8f0;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #64748b;
+  font-size: 16px;
+  font-family: 'Roboto';
+  font-weight: 600;
+}
+
+.submit-assessment-button {
+  font-size: 16px;
+  font-family: 'Roboto';
+  padding: 10px 20px;
+  border: 1px solid #164687;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #164687;
+  cursor: pointer;
+}
