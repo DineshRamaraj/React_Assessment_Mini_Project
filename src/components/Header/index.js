@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import './index.css'
 
 const Header = props => {
@@ -12,11 +12,13 @@ const Header = props => {
 
   return (
     <div className="header-container">
-      <img
-        className="header-logo"
-        src="https://res.cloudinary.com/dhwz560kk/image/upload/v1711550302/c2emvwdwaumbjzq7ienx.png"
-        alt="website logo"
-      />
+      <Link to="/">
+        <img
+          className="header-logo"
+          src="https://res.cloudinary.com/dhwz560kk/image/upload/v1711550302/c2emvwdwaumbjzq7ienx.png"
+          alt="website logo"
+        />
+      </Link>
       <button className="logout-button" type="button" onClick={clickLogout}>
         Logout
       </button>
