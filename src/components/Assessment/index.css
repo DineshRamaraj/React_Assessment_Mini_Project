@@ -1,10 +1,39 @@
-.assessment-side-container {
+.loader-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.main-assessment-container {
+  display: flex;
+  flex-direction: column;
   padding: 15px;
+  padding-bottom: 40px;
+}
+
+@media screen and (min-width: 768px) {
+  .main-assessment-container {
+    flex-direction: row;
+  }
+}
+
+.assessment-side-container {
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .assessment-side-container {
+    min-width: 40%;
+    width: 450px;
+    order: 2;
+  }
 }
 
 .time-container {
   background-color: #475987;
-  padding: 2px 20px;
+  padding: 0 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -110,17 +139,36 @@
 }
 
 .questions-item {
-  border: 1px solid #e2e8f0;
+  background-color: transparent;
   width: 40px;
   height: 40px;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #64748b;
   font-size: 16px;
   font-family: 'Roboto';
   font-weight: 600;
+  margin-right: 15px;
+  margin-bottom: 30px;
+}
+
+.initial-status {
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  background-color: #fafbfe;
+}
+
+.answered-status {
+  border: 1px solid #7c599f;
+  color: #64748b;
+  background-color: #7c599f26;
+}
+
+.progress-status {
+  border: 1px solid #60a5fa;
+  color: #64748b;
+  background-color: #eff6ff;
 }
 
 .submit-assessment-button {
@@ -134,10 +182,151 @@
   cursor: pointer;
 }
 
-.loader-container {
+.question-and-answer-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 30px 40px;
+  box-shadow: 5px 5px 5px 5px #dae4fa80;
+  margin-top: 10px;
+  border-radius: 10px;
   min-height: 70vh;
+}
+
+@media screen and (min-width: 768px) {
+  .question-and-answer-container {
+    order: 1;
+    width: 100%;
+  }
+}
+
+.question-choice-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.question-number-and-text-container {
+  display: flex;
+  align-items: center;
+}
+
+.question-number {
+  color: #164687;
+  font-size: 18px;
+  font-family: 'Roboto';
+  font-weight: 700;
+  margin-bottom: 5px;
+  align-self: flex-start;
+  margin-top: 0;
+}
+
+.question-text {
+  color: #164687;
+  font-size: 18px;
+  font-family: 'Roboto';
+  font-weight: 700;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  margin-top: 0;
+}
+
+.question-hr-line {
+  border: 1px solid #9797973f;
+  width: 100%;
+}
+
+.question-default-container {
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.question-default-item {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .question-default-item {
+    width: 46%;
+    margin-right: 20px;
+  }
+}
+
+.question-and-answer-default-button {
+  padding: 15px 20px;
+  width: 100%;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+  font-size: 18px;
+  font-family: 'Roboto';
+  font-weight: 400;
+  background-color: #ebf3ff;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+}
+
+.question-image-container {
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.question-image-item {
+  margin-bottom: 20px;
+  width: 80%;
+}
+
+@media screen and (min-width: 576px) {
+  .question-image-item {
+    width: 46%;
+    margin-right: 20px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .question-image-item {
+    width: 46%;
+    margin-right: 20px;
+  }
+}
+
+.question-and-answer-image-button {
+  width: 100%;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.question-button-image {
+  width: 100%;
+}
+
+.question-select-container {
+  width: 300px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-family: 'Roboto';
+  border-radius: 6px;
+}
+
+.next-question-button-container {
+  align-self: flex-end;
+}
+
+.next-question-button {
+  font-family: 'Roboto';
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #164687;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
 }
