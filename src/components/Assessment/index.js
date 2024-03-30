@@ -143,51 +143,57 @@ class Assessment extends Component {
         <Header />
         <div className="main-assessment-container">
           <div className="assessment-side-container">
-            <div className="time-container">
-              <p className="time-title">Time Left</p>
-              <p className="display-time">{displayTime}</p>
-            </div>
-            <div className="answer-details-container">
-              <div className="answered-questions">
-                <div className="answer-score-container">
-                  <p className="answer-score">{answerScore}</p>
-                </div>
-                <p className="answer-title">Answered Questions</p>
+            <div className="assessment-time-question-number-container">
+              <div className="time-container">
+                <p className="time-title">Time Left</p>
+                <p className="display-time">{displayTime}</p>
               </div>
-              <div className="un-answered-questions">
-                <div className="un-answer-score-container">
-                  <p className="un-answer-score">{unAnswerScore}</p>
+              <div className="answer-details-container">
+                <div className="answered-questions">
+                  <div className="answer-score-container">
+                    <p className="answer-score">{answerScore}</p>
+                  </div>
+                  <p className="answer-title">Answered Questions</p>
                 </div>
-                <p className="un-answer-title">Unanswered Questions</p>
-              </div>
-              <hr className="horizontal-line" />
-              <h1 className="question-topic">
-                Questions ({questionList.length})
-              </h1>
-              <ul className="questions-list-container">
-                {questionNumberList.map(eachNumber => {
-                  const eachItemStatus = () => {
-                    if (eachNumber.questionStatus === questionStatus.initial) {
-                      return 'initial-status'
+                <div className="un-answered-questions">
+                  <div className="un-answer-score-container">
+                    <p className="un-answer-score">{unAnswerScore}</p>
+                  </div>
+                  <p className="un-answer-title">Unanswered Questions</p>
+                </div>
+                <hr className="horizontal-line" />
+                <h1 className="question-topic">
+                  Questions ({questionList.length})
+                </h1>
+                <ul className="questions-list-container">
+                  {questionNumberList.map(eachNumber => {
+                    const eachItemStatus = () => {
+                      if (
+                        eachNumber.questionStatus === questionStatus.initial
+                      ) {
+                        return 'initial-status'
+                      }
+                      if (
+                        eachNumber.questionStatus === questionStatus.inProgress
+                      ) {
+                        return 'progress-status'
+                      }
+                      return 'answered-status'
                     }
-                    if (
-                      eachNumber.questionStatus === questionStatus.inProgress
-                    ) {
-                      return 'progress-status'
-                    }
-                    return 'answered-status'
-                  }
 
-                  return (
-                    <li
-                      className={`${eachItemStatus()} questions-item`}
-                      key={eachNumber.id}
-                    >
-                      {eachNumber.questionNumber}
-                    </li>
-                  )
-                })}
-              </ul>
+                    return (
+                      <li
+                        className={`${eachItemStatus()} questions-item`}
+                        key={eachNumber.id}
+                      >
+                        {eachNumber.questionNumber}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            </div>
+            <div className="submit-button-container">
               <button type="button" className="submit-assessment-button">
                 Submit Assessment
               </button>
