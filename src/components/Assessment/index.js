@@ -1,8 +1,11 @@
+
 import Cookies from 'js-cookie'
 import {v4 as uuid} from 'uuid'
+import {Redirect} from 'react-router-dom'
 import Loader from 'react-loader-spinner'
 import {Component} from 'react'
 import Header from '../Header'
+import ContextContainer from '../../Context/ContextComponent'
 import './index.css'
 
 const apiStatusConstants = {
@@ -34,6 +37,9 @@ class Assessment extends Component {
     displayTime: 10,
     currentQuestion: 1,
     currentAnswerId: '',
+    selectItem: '',
+    timeTaken: 0,
+    yourScore: 0,
   }
 
   componentDidMount() {
@@ -42,13 +48,22 @@ class Assessment extends Component {
 
   changeQuestionInitialToProgress = () => {
     const {currentQuestion, currentAnswerId, questionList} = this.state
-    const isSuccessItem = questionList[currentQuestion - 2].options.find(
-      eachOption => eachOption.id === currentAnswerId,
-    )
+    const isSuccessItem = questionList[
+      currentQuestion - 2 < 0 ? 0 : currentQuestion - 2
+    ].options.find(eachOption => eachOption.id === currentAnswerId)
     const isSuccessId = isSuccessItem ? isSuccessItem.id : undefined
+
+    if (isSuccessId) {
+      this.setState(prevState => ({
+        answerScore: prevState.answerScore + 1,
+        unAnswerScore: prevState.unAnswerScore - 1,
+      }))
+    }
 
     this.setState(prevState => ({
       questionNumberList: prevState.questionNumberList.map(eachItem => {
+        //   console.log(index)
+        //   console.log('current ', currentQuestion - 2)
         if (
           currentQuestion - 1 === eachItem.questionNumber &&
           isSuccessId === currentAnswerId
@@ -56,11 +71,21 @@ class Assessment extends Component {
           return {...eachItem, questionStatus: questionStatus.success}
         }
 
-        if (currentQuestion === eachItem.questionNumber) {
+        if (
+          currentQuestion === eachItem.questionNumber &&
+          eachItem.questionStatus !== 'SUCCESS'
+        ) {
           return {...eachItem, questionStatus: questionStatus.inProgress}
         }
 
-        return {...eachItem, questionStatus: questionStatus.initial}
+        if (
+          (eachItem.questionStatus === 'INITIAL' ||
+            eachItem.questionStatus === 'IN_PROGRESS') &&
+          currentQuestion !== eachItem.questionNumber
+        ) {
+          return {...eachItem, questionStatus: questionStatus.initial}
+        }
+        return {...eachItem}
       }),
       currentAnswerId: '',
     }))
@@ -135,12 +160,32 @@ class Assessment extends Component {
   )
 
   clickNextButton = () => {
-    this.setState(
-      prevState => ({
-        currentQuestion: prevState.currentQuestion + 1,
-      }),
-      this.changeQuestionInitialToProgress,
+    const {currentAnswerId, questionList, currentQuestion} = this.state
+    const findItem = questionList[currentQuestion - 1].options.find(
+      eachItem => eachItem.id === currentAnswerId,
     )
+    console.log(findItem)
+    if (findItem.isCorrect === 'true') {
+      this.setState(
+        prevState => ({
+          currentQuestion: prevState.currentQuestion + 1,
+          yourScore: prevState.yourScore + 1,
+        }),
+        this.changeQuestionInitialToProgress,
+      )
+    } else {
+      this.setState(
+        prevState => ({
+          currentQuestion: prevState.currentQuestion + 1,
+        }),
+        this.changeQuestionInitialToProgress,
+      )
+    }
+  }
+
+  submitAssessment = () =>{
+      this.clickNextButton()
+      <Redirect to="/result"/>
   }
 
   renderSideContainer = () => {
@@ -177,6 +222,20 @@ class Assessment extends Component {
             </h1>
             <ul className="questions-list-container">
               {questionNumberList.map(eachNumber => {
+                const clickQuestionNumber = () => {
+                  /* const {currentQuestion} = this.state */
+
+                  const findItem = questionNumberList.find(
+                    eachItem =>
+                      eachItem.questionNumber === eachNumber.questionNumber,
+                  )
+                  if (findItem.questionStatus !== 'SUCCESS') {
+                    this.setState(
+                      {currentQuestion: eachNumber.questionNumber},
+                      this.changeQuestionInitialToProgress,
+                    )
+                  }
+                }
                 const eachItemStatus = () => {
                   if (eachNumber.questionStatus === questionStatus.initial) {
                     return 'initial-status'
@@ -187,12 +246,23 @@ class Assessment extends Component {
                   return 'answered-status'
                 }
 
+                const questionsNumberStatus =
+                  eachNumber.questionStatus !== 'SUCCESS'
+                    ? 'questions-number-status'
+                    : ''
+
                 return (
                   <li
                     className={`${eachItemStatus()} questions-item`}
                     key={eachNumber.id}
                   >
-                    {eachNumber.questionNumber}
+                    <button
+                      type="button"
+                      className={`${questionsNumberStatus} questions-number-button`}
+                      onClick={clickQuestionNumber}
+                    >
+                      {eachNumber.questionNumber}
+                    </button>
                   </li>
                 )
               })}
@@ -200,7 +270,11 @@ class Assessment extends Component {
           </div>
         </div>
         <div className="submit-button-container">
-          <button type="button" className="submit-assessment-button">
+          <button
+            type="button"
+            className="submit-assessment-button"
+            onClick={this.submitAssessment}
+          >
             Submit Assessment
           </button>
         </div>
@@ -209,14 +283,14 @@ class Assessment extends Component {
   }
 
   clickOption = event => {
-    console.log(event.target.id)
+    // console.log(event.target.id)
     this.setState({currentAnswerId: event.target.id})
   }
 
   renderDefaultOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
     const {options} = questionList[currentQuestion - 1]
-    console.log(options)
+    // console.log(options)
     return (
       <ul className="question-default-container">
         {options.map(eachItem => (
@@ -240,8 +314,9 @@ class Assessment extends Component {
   }
 
   renderImageOptions = () => {
-    const {questionList, currentQuestion} = this.state
+    const {questionList, currentQuestion, currentAnswerId} = this.state
     const {options} = questionList[currentQuestion - 1]
+    // console.log(questionList[currentQuestion - 1])
     return (
       <ul className="question-image-container">
         {options.map(eachItem => {
@@ -267,10 +342,15 @@ class Assessment extends Component {
               <button
                 id={eachItem.id}
                 type="button"
-                className="question-and-answer-image-button"
+                className={
+                  currentAnswerId === eachItem.id
+                    ? 'active-image-button question-and-answer-image-button'
+                    : 'question-and-answer-image-button'
+                }
                 onClick={this.clickOption}
               >
                 <img
+                  id={eachItem.id}
                   src={optionsImage}
                   alt={eachItem.text}
                   className="question-button-image"
@@ -283,20 +363,29 @@ class Assessment extends Component {
     )
   }
 
+  clickSelectItem = event => {
+    console.log(event.target.value)
+    this.setState({
+      currentAnswerId: event.target.value,
+      selectItem: event.target.value,
+    })
+  }
+
   renderSingleSelectOptions = () => {
     const {questionList, currentQuestion, selectItem} = this.state
     const {options} = questionList[currentQuestion - 1]
     return (
       <select
         value={selectItem}
-        onChange={this.changeSelectItem}
+        onChange={this.clickSelectItem}
         className="question-select-container"
+        defaultValue={options[0].id}
       >
         {options.map(eachItem => (
           <option
             id={eachItem.id}
             key={eachItem.id}
-            value={eachItem.text}
+            value={eachItem.id}
             className="question-select-item"
           >
             {eachItem.text}
@@ -323,12 +412,18 @@ class Assessment extends Component {
   }
 
   renderSuccess = () => {
-    const {questionList, currentQuestion} = this.state
+    const {questionList, currentQuestion, yourScore, timeTaken} = this.state
     const {questionText} = questionList[currentQuestion - 1]
     // console.log(currentQuestion)
     // console.log(questionList[currentQuestion])
     return (
-      <>
+      <ContextContainer.Provider
+        value={{
+          yourScore,
+          timeTaken,
+          clickReattempt: this.clickReattempt,
+        }}
+      >
         <Header />
         <div className="main-assessment-container">
           {this.renderSideContainer()}
@@ -354,7 +449,7 @@ class Assessment extends Component {
             )}
           </div>
         </div>
-      </>
+      </ContextContainer.Provider>
     )
   }
 

@@ -80,8 +80,8 @@
 .answer-score-container {
   background-color: #7c599f;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,7 +97,7 @@
   color: #496387;
   font-size: 18px;
   font-family: 'Roboto';
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .un-answered-questions {
@@ -108,8 +108,8 @@
 .un-answer-score-container {
   background-color: transparent;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -126,7 +126,7 @@
   color: #496387;
   font-size: 18px;
   font-family: 'Roboto';
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .horizontal-line {
@@ -148,18 +148,29 @@
 }
 
 .questions-item {
-  background-color: transparent;
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
-  font-family: 'Roboto';
-  font-weight: 600;
   margin-right: 15px;
   margin-bottom: 30px;
+  border-radius: 3px;
+}
+
+.questions-number-button {
+  cursor: no-drop;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-family: 'Roboto';
+  font-weight: 400;
+}
+
+.questions-number-status {
+  cursor: pointer;
 }
 
 .initial-status {
@@ -230,20 +241,20 @@
   color: #164687;
   font-size: 18px;
   font-family: 'Roboto';
-  font-weight: 700;
-  margin-bottom: 5px;
+  font-weight: 500;
   align-self: flex-start;
-  margin-top: 0;
+  margin-top: 2px;
 }
 
 .question-text {
   color: #164687;
   font-size: 18px;
   font-family: 'Roboto';
-  font-weight: 700;
+  font-weight: 500;
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 0;
+  line-height: 1.5;
 }
 
 .question-hr-line {
@@ -323,6 +334,11 @@
   border: none;
   cursor: pointer;
   padding: 0;
+}
+
+.active-image-button {
+  border: 2px solid #263868;
+  border-radius: 4px;
 }
 
 .question-button-image {
