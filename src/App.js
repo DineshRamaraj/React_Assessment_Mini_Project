@@ -145,35 +145,6 @@ class App extends Component {
     }))
   }
 
-  clickNextButton = () => {
-    const {currentAnswerId, questionList, currentQuestion} = this.state
-    const findItem = questionList[currentQuestion - 1].options.find(
-      eachItem => eachItem.id === currentAnswerId,
-    )
-    console.log(findItem)
-    if (findItem.isCorrect === 'true') {
-      this.setState(
-        prevState => ({
-          currentQuestion: prevState.currentQuestion + 1,
-          yourScore: prevState.yourScore + 1,
-        }),
-        this.changeQuestionInitialToProgress,
-      )
-    } else {
-      this.setState(
-        prevState => ({
-          currentQuestion: prevState.currentQuestion + 1,
-        }),
-        this.changeQuestionInitialToProgress,
-      )
-    }
-  }
-
-  submitAssessment = () => {
-    const {history} = this.props
-    history.replace('/result')
-  }
-
   clickReattempt = () => {
     const {history} = this.props
     history.replace('/assessment')
@@ -195,17 +166,57 @@ class App extends Component {
     )
   }
 
-  clickSelectItem = event => {
-    console.log(event.target.value)
-    this.setState({
-      currentAnswerId: event.target.value,
-      selectItem: event.target.value,
-    })
+  submitAssessment = () => {
+    const {history} = this.props
+    history.replace('/result')
   }
 
   clickOption = event => {
     // console.log(event.target.id)
     this.setState({currentAnswerId: event.target.id})
+  }
+
+  clickQuestionNumber = questionNumber => {
+    this.setState(
+      {currentQuestion: questionNumber},
+      this.changeQuestionInitialToProgress,
+    )
+  }
+
+  changeSelectItem = selectValue => {
+    console.log(selectValue)
+    this.setState({
+      currentAnswerId: selectValue,
+      selectItem: selectValue,
+    })
+  }
+
+  clickNext = () => {
+    const {currentAnswerId, questionList, currentQuestion} = this.state
+    // console.log(findItem)
+    if (currentAnswerId !== undefined) {
+      const findItem = questionList[currentQuestion - 1].options.find(
+        eachItem => eachItem.id === currentAnswerId,
+      )
+      if (findItem.isCorrect === 'true') {
+        this.setState(
+          prevState => ({
+            currentQuestion: prevState.currentQuestion + 1,
+            yourScore: prevState.yourScore + 1,
+          }),
+          this.changeQuestionInitialToProgress,
+        )
+      } else {
+        this.setState(
+          prevState => ({
+            currentQuestion: prevState.currentQuestion + 1,
+          }),
+          this.changeQuestionInitialToProgress,
+        )
+      }
+    } else {
+      this.setState({showErrorMsg: true})
+    }
   }
 
   render() {
@@ -237,6 +248,9 @@ class App extends Component {
           currentQuestion,
           currentAnswerId,
           clickQuestionNumber: this.clickQuestionNumber,
+          clickOption: this.clickOption,
+          changeSelectItem: this.changeSelectItem,
+          clickNext: this.clickNext,
         }}
       >
         <Switch>

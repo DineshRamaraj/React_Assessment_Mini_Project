@@ -73,7 +73,7 @@ class Assessment extends Component {
                 <ul className="questions-list-container">
                   {questionNumberList.map(eachNumber => {
                     const onClickQuestionNumber = () => {
-                      clickQuestionNumber()
+                      clickQuestionNumber(eachNumber.questionNumber)
                     }
                     const eachItemStatus = () => {
                       if (
@@ -130,27 +130,37 @@ class Assessment extends Component {
   renderDefaultOptions = () => (
     <ContextContainer.Consumer>
       {value => {
-        const {questionList, currentQuestion, currentAnswerId} = value
+        const {
+          questionList,
+          currentQuestion,
+          currentAnswerId,
+          clickOption,
+        } = value
         const {options} = questionList[currentQuestion - 1]
         // console.log(options)
         return (
           <ul className="question-default-container">
-            {options.map(eachItem => (
-              <li className="question-default-item" key={eachItem.id}>
-                <button
-                  id={eachItem.id}
-                  type="button"
-                  className={
-                    currentAnswerId === eachItem.id
-                      ? 'active-default-button question-and-answer-default-button'
-                      : 'question-and-answer-default-button'
-                  }
-                  onClick={this.clickOption}
-                >
-                  {eachItem.text}
-                </button>
-              </li>
-            ))}
+            {options.map(eachItem => {
+              const onClickOption = event => {
+                clickOption(event)
+              }
+              return (
+                <li className="question-default-item" key={eachItem.id}>
+                  <button
+                    id={eachItem.id}
+                    type="button"
+                    className={
+                      currentAnswerId === eachItem.id
+                        ? 'active-default-button question-and-answer-default-button'
+                        : 'question-and-answer-default-button'
+                    }
+                    onClick={onClickOption}
+                  >
+                    {eachItem.text}
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         )
       }}
@@ -160,7 +170,12 @@ class Assessment extends Component {
   renderImageOptions = () => (
     <ContextContainer.Consumer>
       {value => {
-        const {questionList, currentQuestion, currentAnswerId} = value
+        const {
+          questionList,
+          currentQuestion,
+          currentAnswerId,
+          clickOption,
+        } = value
         const {options} = questionList[currentQuestion - 1]
         return (
           <ul className="question-image-container">
@@ -182,6 +197,11 @@ class Assessment extends Component {
                 optionsImage =
                   'https://res.cloudinary.com/dhwz560kk/image/upload/v1711735513/zdylxw8fqvyn4dbvwu66.png'
               }
+
+              const onClickOption = event => {
+                clickOption(event)
+              }
+
               return (
                 <li className="question-image-item" key={eachItem.id}>
                   <button
@@ -192,7 +212,7 @@ class Assessment extends Component {
                         ? 'active-image-button question-and-answer-image-button'
                         : 'question-and-answer-image-button'
                     }
-                    onClick={this.clickOption}
+                    onClick={onClickOption}
                   >
                     <img
                       id={eachItem.id}
@@ -213,14 +233,28 @@ class Assessment extends Component {
   renderSingleSelectOptions = () => (
     <ContextContainer.Consumer>
       {value => {
-        const {questionList, currentQuestion, selectItem} = value
+        const {
+          questionList,
+          currentQuestion,
+          selectItem,
+          changeSelectItem,
+        } = value
         const {options} = questionList[currentQuestion - 1]
+
+        const onChangeSelectItem = event => {
+          const defaultSelection =
+            questionList[currentQuestion - 1].options[0].id
+          console.log('Default', defaultSelection)
+          if (event.target.value !== undefined)
+            changeSelectItem(event.target.value)
+          else changeSelectItem(defaultSelection)
+        }
+
         return (
           <select
             value={selectItem}
-            onChange={this.clickSelectItem}
+            onChange={onChangeSelectItem}
             className="question-select-container"
-            defaultValue={options[0].id}
           >
             {options.map(eachItem => (
               <option
@@ -261,7 +295,11 @@ class Assessment extends Component {
   renderSuccess = () => (
     <ContextContainer.Consumer>
       {value => {
-        const {questionText, questionList, currentQuestion} = value
+        const {questionList, currentQuestion, clickNext} = value
+        const {questionText} = questionList[currentQuestion - 1]
+        const clickNextButton = () => {
+          clickNext()
+        }
         return (
           <>
             <Header />
@@ -281,7 +319,7 @@ class Assessment extends Component {
                     <button
                       type="button"
                       className="next-question-button"
-                      onClick={this.clickNextButton}
+                      onClick={clickNextButton}
                     >
                       Next Question
                     </button>
