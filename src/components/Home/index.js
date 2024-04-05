@@ -1,4 +1,5 @@
-// import {Redirect} from 'react-router-dom'
+import Cookies from 'js-cookie'
+import {Redirect} from 'react-router-dom'
 import Header from '../Header'
 import './index.css'
 
@@ -7,6 +8,11 @@ const Home = props => {
     const {history} = props
     console.log('clicking')
     history.push('/assessment')
+  }
+
+  const jwtToken = Cookies.get('jwt_token')
+  if (jwtToken === undefined) {
+    return <Redirect to="/login" />
   }
 
   return (
