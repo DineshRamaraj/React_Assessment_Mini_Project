@@ -1,0 +1,43 @@
+.main-failure-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.failure-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.failure-img {
+  width: 100%;
+  max-width: 400px;
+}
+
+.failure-heading {
+  font-size: 24px;
+  font-family: 'Roboto';
+  color: #334155;
+  font-weight: 400;
+}
+
+.failure-description {
+  font-size: 16px;
+  font-family: 'Roboto';
+  color: #64748b;
+}
+
+.failure-button {
+  background-color: #164687;
+  padding: 10px 25px;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: 'Roboto';
+  cursor: pointer;
+}

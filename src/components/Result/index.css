@@ -1,14 +1,22 @@
+.main-result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
 .result-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 70vh;
-  padding-bottom: 30px;
+  padding: 30px 50px;
+  box-shadow: 5px 5px 5px 5px #7b879429;
+  border-radius: 10px;
 }
 
 .result-image {
-  width: 40%;
-  max-width: 400px;
+  width: 100%;
+  max-width: 350px;
 }
 
 .result-title-container {

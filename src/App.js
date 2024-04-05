@@ -1,13 +1,14 @@
 import Cookies from 'js-cookie'
-import {Switch, Route} from 'react-router-dom'
+import {Switch, Route, Redirect} from 'react-router-dom'
 import {Component} from 'react'
 import {v4 as uuid} from 'uuid'
 import Login from './components/Login'
 import Home from './components/Home'
 import Assessment from './components/Assessment'
 import Result from './components/Result'
-import './App.css'
+import NotFound from './components/NotFound'
 import ContextContainer from './Context/ContextComponent'
+import './App.css'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -146,8 +147,6 @@ class App extends Component {
   }
 
   clickReattempt = () => {
-    const {history} = this.props
-    history.replace('/assessment')
     this.setState(
       {
         apiStatus: apiStatusConstants.initial,
@@ -164,11 +163,6 @@ class App extends Component {
       },
       this.getQuestionsList,
     )
-  }
-
-  submitAssessment = () => {
-    const {history} = this.props
-    history.replace('/result')
   }
 
   clickOption = event => {
@@ -193,8 +187,7 @@ class App extends Component {
 
   clickNext = () => {
     const {currentAnswerId, questionList, currentQuestion} = this.state
-    // console.log(findItem)
-    if (currentAnswerId !== undefined) {
+    if (currentAnswerId !== '') {
       const findItem = questionList[currentQuestion - 1].options.find(
         eachItem => eachItem.id === currentAnswerId,
       )
@@ -217,6 +210,10 @@ class App extends Component {
     } else {
       this.setState({showErrorMsg: true})
     }
+  }
+
+  clickRetry = () => {
+    this.getQuestionsList()
   }
 
   render() {
@@ -251,13 +248,17 @@ class App extends Component {
           clickOption: this.clickOption,
           changeSelectItem: this.changeSelectItem,
           clickNext: this.clickNext,
+          clickReattempt: this.clickReattempt,
+          clickRetry: this.clickRetry,
         }}
       >
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/assessment" component={Assessment} />
-          <Route exact path="/result" component={Result} />
+          <Route exact path="/results" component={Result} />
+          <Route exact path="/bad-path" component={NotFound} />
+          <Redirect to="/bad-path" />
         </Switch>
       </ContextContainer.Provider>
     )

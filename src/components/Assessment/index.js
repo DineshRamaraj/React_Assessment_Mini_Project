@@ -3,6 +3,7 @@ import Loader from 'react-loader-spinner'
 import {Redirect} from 'react-router-dom'
 import {Component} from 'react'
 import Header from '../Header'
+import Failure from '../Failure'
 import ContextContainer from '../../Context/ContextComponent'
 import './index.css'
 
@@ -46,6 +47,11 @@ class Assessment extends Component {
           questionNumberList,
           clickQuestionNumber,
         } = value
+
+        const submitAssessment = () => {
+          const {history} = this.props
+          history.replace('/result')
+        }
         return (
           <div className="assessment-side-container">
             <div className="assessment-time-question-number-container">
@@ -116,7 +122,7 @@ class Assessment extends Component {
               <button
                 type="button"
                 className="submit-assessment-button"
-                onClick={this.submitAssessment}
+                onClick={submitAssessment}
               >
                 Submit Assessment
               </button>
@@ -331,6 +337,13 @@ class Assessment extends Component {
         )
       }}
     </ContextContainer.Consumer>
+  )
+
+  renderFailure = () => (
+    <>
+      <Header />
+      <Failure />
+    </>
   )
 
   render() {
