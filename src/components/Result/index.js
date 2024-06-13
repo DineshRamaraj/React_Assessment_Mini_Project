@@ -7,7 +7,8 @@ import './index.css'
 const Result = props => (
   <ContextContainer.Consumer>
     {value => {
-      const {yourScore, timeTaken, clickReattempt} = value
+      const {score, displayTime, clickReattempt} = value
+
       const onClickReattempt = () => {
         clickReattempt()
         const {history} = props
@@ -36,12 +37,19 @@ const Result = props => (
               </div>
               <div className="result-time-container">
                 <h1 className="result-time-title">
-                  Time Taken: <span className="result-time">{timeTaken}</span>
+                  Time Taken:{' '}
+                  <span className="result-time">{`${
+                    parseInt(displayTime / 60 / 60) > 9 ? '' : 0
+                  }${parseInt(displayTime / 60 / 60)} : ${
+                    parseInt(displayTime / 60) > 9 ? '' : '0'
+                  }${parseInt(displayTime / 60)} : ${
+                    parseInt(displayTime % 60) > 9 ? '' : '0'
+                  }${parseInt(displayTime % 60)}`}</span>
                 </h1>
               </div>
               <div className="result-score-container">
                 <h1 className="result-score-title">
-                  Your Score: <span className="result-score">{yourScore}</span>
+                  Your Score: <span className="result-score">{score}</span>
                 </h1>
               </div>
               <button
