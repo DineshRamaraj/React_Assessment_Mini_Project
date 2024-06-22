@@ -1,4 +1,4 @@
-import {withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import ContextContainer from '../../Context/ContextComponent'
 
 const questionStatus = {
@@ -10,20 +10,21 @@ const questionStatus = {
 const SideContainer = props => (
   <ContextContainer.Consumer>
     {value => {
-      const {displayTime, submitAnswer} = value
+      const {resultTime, submitAnswer} = value
       const {
+        displayTime,
         score,
         answeredScore,
         unAnsweredScore,
         questionLength,
         questionNumberList,
         clickQuestionNumber,
+        /* stopTriggerTime, */
       } = props
 
       const clickSubmit = () => {
-        submitAnswer(score)
-        const {history} = props
-        history.replace('/result')
+        submitAnswer(score, resultTime)
+        /* stopTriggerTime() */
       }
 
       return (
@@ -97,13 +98,15 @@ const SideContainer = props => (
             </div>
           </div>
           <div className="submit-button-container">
-            <button
-              type="button"
-              className="submit-assessment-button"
-              onClick={clickSubmit}
-            >
-              Submit Assessment
-            </button>
+            <Link to="/result">
+              <button
+                type="button"
+                className="submit-assessment-button"
+                onClick={clickSubmit}
+              >
+                Submit Assessment
+              </button>
+            </Link>
           </div>
         </div>
       )
@@ -111,4 +114,4 @@ const SideContainer = props => (
   </ContextContainer.Consumer>
 )
 
-export default withRouter(SideContainer)
+export default SideContainer

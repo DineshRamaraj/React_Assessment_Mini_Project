@@ -39,11 +39,25 @@ class Assessment extends Component {
     answeredScore: 0,
     unAnsweredScore: 0,
     score: 0,
+    displayTime: 10,
   }
 
+  interval = null
+
   componentDidMount() {
+    this.setState(prevState => ({displayTime: prevState.displayTime * 60}))
+    this.triggerTime()
     this.getQuestionsList()
-    // this.triggingTime()
+  }
+
+  triggerTime = () => {
+    this.interval = setInterval(() => {
+      this.setState(prevState => ({displayTime: prevState.displayTime - 1}))
+      const {displayTime} = this.state
+      if (displayTime === 0) {
+        clearInterval(this.interval)
+      }
+    }, 1000)
   }
 
   getQuestionsList = async () => {
@@ -335,6 +349,7 @@ class Assessment extends Component {
       answeredScore,
       unAnsweredScore,
       questionNumberList,
+      displayTime,
     } = this.state
     const {questionText} = questionList[currentQuestion - 1]
 
@@ -343,7 +358,9 @@ class Assessment extends Component {
         <Header />
         <div className="main-assessment-container">
           <SideContainer
+            displayTime={displayTime}
             score={score}
+            stopTriggerTime={this.stopTriggerTime}
             answeredScore={answeredScore}
             unAnsweredScore={unAnsweredScore}
             questionLength={questionList.length}
