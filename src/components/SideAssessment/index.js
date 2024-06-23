@@ -89,7 +89,7 @@ const SideContainer = props => (
                         className={`${questionsNumberStatus} questions-number-button`}
                         onClick={onClickQuestionNumber}
                       >
-                        {eachNumber.questionNumber}
+                        {eachNumber.questionNumber + 1}
                       </button>
                     </li>
                   )

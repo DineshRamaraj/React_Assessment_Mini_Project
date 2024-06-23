@@ -33,8 +33,8 @@ class Assessment extends Component {
     apiStatus: apiStatusConstants.initial,
     questionNumberList: [],
     questionList: [],
-    currentQuestion: 1,
-    currentAnswerId: 0,
+    currentQuestion: 0,
+    currentAnswerId: undefined,
     selectItem: '',
     answeredScore: 0,
     unAnsweredScore: 0,
@@ -101,8 +101,8 @@ class Assessment extends Component {
   numberOfQuestions = questionsLength => {
     let newObject
     const newNumberList = []
-    for (let i = 1; i <= questionsLength; i += 1) {
-      if (i === 1) {
+    for (let i = 0; i <= questionsLength; i += 1) {
+      if (i === 0) {
         newObject = {
           id: uuid(),
           questionNumber: i,
@@ -122,23 +122,21 @@ class Assessment extends Component {
 
   changeQuestionInitialToProgress = () => {
     const {currentQuestion, currentAnswerId, questionList} = this.state
-    const isSuccessItem = questionList[
-      currentQuestion - 2 < 0 ? 0 : currentQuestion - 2
-    ].options.find(eachOption => eachOption.id === currentAnswerId)
+    const isSuccessItem = questionList[currentQuestion - 1].options.find(
+      eachOption => eachOption.id === currentAnswerId,
+    )
     const isSuccessId = isSuccessItem ? isSuccessItem.id : undefined
     console.log('successId: ', isSuccessId)
 
     if (isSuccessId) {
       this.setState(prevState => ({
-        answerScore: prevState.answerScore + 1,
-        unAnswerScore: prevState.unAnswerScore - 1,
+        answeredScore: prevState.answeredScore + 1,
+        unAnsweredScore: prevState.unAnsweredScore - 1,
       }))
     }
 
     this.setState(prevState => ({
       questionNumberList: prevState.questionNumberList.map(eachItem => {
-        //   console.log(index)
-        //   console.log('current ', currentQuestion - 2)
         if (
           currentQuestion - 1 === eachItem.questionNumber &&
           isSuccessId === currentAnswerId
@@ -156,7 +154,7 @@ class Assessment extends Component {
         if (
           (eachItem.questionStatus === 'INITIAL' ||
             eachItem.questionStatus === 'IN_PROGRESS') &&
-          currentQuestion !== eachItem.questionNumber
+          currentQuestion + 1 !== eachItem.questionNumber
         ) {
           return {...eachItem, questionStatus: questionStatus.initial}
         }
@@ -166,29 +164,39 @@ class Assessment extends Component {
   }
 
   clickOption = event => {
-    const {questionList, currentQuestion} = this.state
+    const {questionList, currentQuestion, currentAnswerId} = this.state
     // console.log('click options')
     // console.log(score)
+    console.log(questionList[currentQuestion])
 
-    const findItem = questionList[currentQuestion - 1].options.find(
+    const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === event.target.id,
     )
+    console.log('findItem: ', findItem)
 
-    if (findItem.isCorrect === 'true') {
+    if (currentAnswerId === undefined) {
+      if (findItem.isCorrect === 'true') {
+        this.setState(prevState => ({
+          score: prevState.score + 1,
+          currentAnswerId: event.target.id,
+        }))
+      }
+    } else if (currentAnswerId !== undefined && findItem.isCorrect === 'true') {
       this.setState(prevState => ({
+        currentAnswerId: event.target.id,
         score: prevState.score + 1,
-        currentAnswerId: event.target.id,
       }))
-    } else {
-      this.setState({
+    } else if (findItem.isCorrect === 'false') {
+      this.setState(prevState => ({
         currentAnswerId: event.target.id,
-      })
+        score: prevState.score - 1 < 0 ? 0 : prevState.score - 1,
+      }))
     }
   }
 
   renderDefaultOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    const {options} = questionList[currentQuestion - 1]
+    const {options} = questionList[currentQuestion]
     // console.log(options)
     // console.log(currentQuestion)
     // console.log(currentAnswerId)
@@ -216,7 +224,7 @@ class Assessment extends Component {
 
   renderImageOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    const {options} = questionList[currentQuestion - 1]
+    const {options} = questionList[currentQuestion]
 
     return (
       <ul className="question-image-container">
@@ -267,10 +275,10 @@ class Assessment extends Component {
 
   renderSingleSelectOptions = () => {
     const {questionList, currentQuestion, selectItem} = this.state
-    const {options} = questionList[currentQuestion - 1]
+    const {options} = questionList[currentQuestion]
 
     const onChangeSelectItem = event => {
-      const defaultSelection = questionList[currentQuestion - 1].options[0].id
+      const defaultSelection = questionList[currentQuestion].options[0].id
       /* console.log('Default', defaultSelection) */
 
       if (event.target.value !== undefined) {
@@ -308,7 +316,7 @@ class Assessment extends Component {
 
   renderMainAnswerOptionsContainer = () => {
     const {questionList, currentQuestion} = this.state
-    const {optionsType} = questionList[currentQuestion - 1]
+    const {optionsType} = questionList[currentQuestion]
 
     switch (optionsType) {
       case optionsTypeConstants.default:
@@ -326,12 +334,25 @@ class Assessment extends Component {
   }
 
   clickNextButton = () => {
-    this.setState(
-      prevState => ({
-        currentQuestion: prevState.currentQuestion + 1,
-      }),
-      this.changeQuestionInitialToProgress,
-    )
+    const {questionList, currentQuestion} = this.state
+    const {optionsType} = questionList[currentQuestion + 1]
+    // console.log(optionsType)
+    if (optionsType === 'SINGLE_SELECT') {
+      this.setState(
+        prevState => ({
+          currentQuestion: prevState.currentQuestion + 1,
+          currentAnswerId: questionList[currentQuestion + 1].options[0].id,
+        }),
+        this.changeQuestionInitialToProgress,
+      )
+    } else {
+      this.setState(
+        prevState => ({
+          currentQuestion: prevState.currentQuestion + 1,
+        }),
+        this.changeQuestionInitialToProgress,
+      )
+    }
   }
 
   clickQuestionNumber = questionNumber => {
@@ -351,7 +372,7 @@ class Assessment extends Component {
       questionNumberList,
       displayTime,
     } = this.state
-    const {questionText} = questionList[currentQuestion - 1]
+    const {questionText} = questionList[currentQuestion]
 
     return (
       <>
@@ -371,14 +392,14 @@ class Assessment extends Component {
           <div className="question-and-answer-container">
             <div className="question-choice-container">
               <div className="question-number-and-text-container">
-                <span className="question-number">{currentQuestion}.</span>
+                <span className="question-number">{currentQuestion + 1}.</span>
                 <p className="question-text">{questionText}</p>
               </div>
               <hr className="question-hr-line" />
               <div>{this.renderMainAnswerOptionsContainer()}</div>
             </div>
             <div>
-              {questionList.length !== currentQuestion && (
+              {questionList.length - 1 !== currentQuestion && (
                 <div className="next-question-button-container">
                   <button
                     type="button"
