@@ -351,6 +351,29 @@
   font-size: 16px;
   font-family: 'Roboto';
   border-radius: 6px;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+}
+
+.question-select-hint-container {
+  align-self: flex-end;
+  background-color: #fef3c7;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.question-select-hint-image {
+  width: 40px;
+  height: 40px;
+}
+
+.question-select-hint {
+  color: #d97706;
+  font-size: 14px;
+  font-family: 'Roboto';
 }
 
 .next-question-button-container {

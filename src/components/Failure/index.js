@@ -1,19 +1,21 @@
 import ContextComponent from '../../Context/ContextComponent'
 import './index.css'
 
-const Failure = () => (
+const Failure = props => (
   <ContextComponent.Consumer>
     {value => {
-      const {clickRetry} = value
+      const {onRetry} = value
       const onClickRetry = () => {
-        clickRetry()
+        onRetry()
+        const {history} = props
+        history.replace('/assessment')
       }
       return (
         <div className="main-failure-container">
           <div className="failure-container">
             <img
               src="https://res.cloudinary.com/dhwz560kk/image/upload/v1712342164/w1vd87na63ca2t9sargo.png"
-              alt="failure"
+              alt="failure view"
               className="failure-img"
             />
             <h1 className="failure-heading">Oops! Something went wrong</h1>

@@ -10,7 +10,7 @@ const questionStatus = {
 const SideContainer = props => (
   <ContextContainer.Consumer>
     {value => {
-      const {resultTime, submitAnswer} = value
+      const {submitAnswer} = value
       const {
         displayTime,
         score,
@@ -23,9 +23,21 @@ const SideContainer = props => (
       } = props
 
       const clickSubmit = () => {
-        submitAnswer(score, resultTime)
+        submitAnswer(score, displayTime)
         /* stopTriggerTime() */
       }
+
+      const hours = `${parseInt(displayTime / 60 / 60) > 9 ? '' : 0}${parseInt(
+        displayTime / 60 / 60,
+      )}`
+
+      const minutes = `${parseInt(displayTime / 60) > 9 ? '' : '0'}${parseInt(
+        displayTime / 60,
+      )}`
+
+      const seconds = `${parseInt(displayTime % 60) > 9 ? '' : '0'}${parseInt(
+        displayTime % 60,
+      )}`
 
       return (
         <div className="assessment-side-container">
@@ -33,13 +45,7 @@ const SideContainer = props => (
             <div className="time-container">
               <p className="time-title">Time Left</p>
               <p className="display-time">
-                {`${parseInt(displayTime / 60 / 60) > 9 ? '' : 0}${parseInt(
-                  displayTime / 60 / 60,
-                )} : ${parseInt(displayTime / 60) > 9 ? '' : '0'}${parseInt(
-                  displayTime / 60,
-                )} : ${parseInt(displayTime % 60) > 9 ? '' : '0'}${parseInt(
-                  displayTime % 60,
-                )}`}
+                {`${hours} : ${minutes} : ${seconds}`}
               </p>
             </div>
             <div className="answer-details-container">
@@ -98,7 +104,7 @@ const SideContainer = props => (
             </div>
           </div>
           <div className="submit-button-container">
-            <Link to="/result">
+            <Link to="/results">
               <button
                 type="button"
                 className="submit-assessment-button"

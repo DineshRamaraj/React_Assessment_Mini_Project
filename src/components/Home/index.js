@@ -1,15 +1,9 @@
 import Cookies from 'js-cookie'
-import {Redirect} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom'
 import Header from '../Header'
 import './index.css'
 
-const Home = props => {
-  const clickStart = () => {
-    const {history} = props
-    console.log('clicking')
-    history.push('/assessment')
-  }
-
+const Home = () => {
   const jwtToken = Cookies.get('jwt_token')
   if (jwtToken === undefined) {
     return <Redirect to="/login" />
@@ -36,7 +30,7 @@ const Home = props => {
             </li>
             <li className="home-list-item">
               <p className="home-list-para">
-                <span className="home-list-span">Types of Questions:</span>
+                <span className="home-list-span">Types of Questions: </span>
                 MCQs
               </p>
             </li>
@@ -47,24 +41,22 @@ const Home = props => {
             </li>
             <li className="home-list-item">
               <p className="home-list-para">
-                <span className="home-list-span">Making Scheme: </span>
+                <span className="home-list-span">Marking Scheme: </span>
                 Every Correct response, get 1 mark
               </p>
             </li>
             <li className="home-list-item">
               <p className="home-list-para">
-                All the progress will be lost. if you reload during the
+                All the progress will be lost, if you reload during the
                 assessment
               </p>
             </li>
           </ol>
-          <button
-            className="home-start-button"
-            type="button"
-            onClick={clickStart}
-          >
-            Start Assessment
-          </button>
+          <Link to="/assessment">
+            <button className="home-start-button" type="button">
+              Start Assessment
+            </button>
+          </Link>
         </div>
       </div>
     </>

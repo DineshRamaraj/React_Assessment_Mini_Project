@@ -1,10 +1,13 @@
+/* eslint-disable import/no-unresolved */
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {Component} from 'react'
 import Login from './components/Login'
 import Home from './components/Home'
 import Assessment from './components/Assessment'
 import Result from './components/Result'
+import TimeUp from './components/TimeUp'
 import NotFound from './components/NotFound'
+import Failure from './components/Failure'
 import ContextContainer from './Context/ContextComponent'
 import './App.css'
 
@@ -15,15 +18,13 @@ class App extends Component {
   }
 
   submitAnswer = (myScore, displayTime) => {
-    this.setState(
-      {score: myScore, resultTime: displayTime},
-      this.stopTriggerTime,
-    )
+    this.setState({score: myScore, resultTime: displayTime})
+    console.log('hljdl;kjal;kdjfl')
   }
 
-  //   stopTriggerTime = () => {
-  //     clearInterval(this.interval)
-  //   }
+  onRetry = () => {
+    this.setState({resultTime: 0, score: 0})
+  }
 
   clickReattempt = () => {
     this.setState({resultTime: 0, score: 0})
@@ -36,6 +37,7 @@ class App extends Component {
         value={{
           score,
           resultTime,
+          onRetry: this.onRetry,
           submitAnswer: this.submitAnswer,
           clickReattempt: this.clickReattempt,
         }}
@@ -44,7 +46,9 @@ class App extends Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/assessment" component={Assessment} />
-          <Route exact path="/result" component={Result} />
+          <Route exact path="/results" component={Result} />
+          <Route exact path="/time-up" component={TimeUp} />
+          <Route exact path="/failure" component={Failure} />
           <Route exact path="/bad-path" component={NotFound} />
           <Redirect to="/bad-path" />
         </Switch>

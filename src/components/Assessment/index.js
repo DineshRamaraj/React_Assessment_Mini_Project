@@ -7,6 +7,7 @@ import {Component} from 'react'
 import Header from '../Header'
 import Failure from '../Failure'
 import SideContainer from '../SideAssessment'
+import ContextComponent from '../../Context/ContextComponent'
 import './index.css'
 
 const apiStatusConstants = {
@@ -55,11 +56,17 @@ class Assessment extends Component {
 
   triggerTime = () => {
     this.interval = setInterval(() => {
-      this.setState(prevState => ({displayTime: prevState.displayTime - 1}))
-      const {displayTime} = this.state
-      if (displayTime === 0) {
-        clearInterval(this.interval)
-      }
+      this.setState(
+        prevState => ({displayTime: prevState.displayTime - 1}),
+        () => {
+          const {displayTime} = this.state
+          if (displayTime === 0) {
+            clearInterval(this.interval)
+            const {history} = this.props
+            history.replace('/time-up')
+          }
+        },
+      )
     }, 1000)
   }
 
@@ -134,13 +141,6 @@ class Assessment extends Component {
 
     // console.log(optionsType)
 
-    if (isSuccessId) {
-      this.setState(prevState => ({
-        answeredScore: prevState.answeredScore + 1,
-        unAnsweredScore: prevState.unAnsweredScore - 1,
-      }))
-    }
-
     this.setState(prevState => ({
       questionNumberList: prevState.questionNumberList.map(eachItem => {
         if (
@@ -179,6 +179,16 @@ class Assessment extends Component {
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === event.target.id,
     )
+    // console.log('successId: ', isSuccessId)
+
+    // console.log(optionsType)
+
+    if (findItem) {
+      this.setState(prevState => ({
+        answeredScore: prevState.answeredScore + 1,
+        unAnsweredScore: prevState.unAnsweredScore - 1,
+      }))
+    }
     // console.log('findItem: ', findItem)
 
     if (currentAnswerId === undefined && findItem.isCorrect === 'true') {
@@ -318,22 +328,34 @@ class Assessment extends Component {
     // console.log(currentAnswerId)
 
     return (
-      <select
-        value={currentAnswerId}
-        onChange={onChangeSelectItem}
-        className="question-select-container"
-      >
-        {options.map(eachItem => (
-          <option
-            id={eachItem.id}
-            key={eachItem.id}
-            value={eachItem.id}
-            className="question-select-item"
-          >
-            {eachItem.text}
-          </option>
-        ))}
-      </select>
+      <>
+        <select
+          value={currentAnswerId}
+          onChange={onChangeSelectItem}
+          className="question-select-container"
+        >
+          {options.map(eachItem => (
+            <option
+              id={eachItem.id}
+              key={eachItem.id}
+              value={eachItem.id}
+              className="question-select-item"
+            >
+              {eachItem.text}
+            </option>
+          ))}
+        </select>
+        <div className="question-select-hint-container">
+          <img
+            className="question-select-hint-image"
+            src="https://res.cloudinary.com/dhwz560kk/image/upload/v1719322655/ualsfvbwn1nz3eampdyu.png"
+            alt="SINGLE_SELECT"
+          />
+          <p className="question-select-hint">
+            First option is selected by default
+          </p>
+        </div>
+      </>
     )
   }
 
@@ -370,11 +392,13 @@ class Assessment extends Component {
         this.changeQuestionInitialToProgress,
       )
       setTimeout(() => {
-        this.setState({
+        this.setState(prevState => ({
           currentAnswerId: selectItemId,
-        })
+          answeredScore: prevState.answeredScore + 1,
+          unAnsweredScore: prevState.unAnsweredScore - 1,
+        }))
         this.changeOption(selectItemId)
-      }, 1000)
+      }, 100)
     } else {
       this.setState(
         prevState => ({
