@@ -72,6 +72,19 @@
   padding: 20px;
 }
 
+.answer-unanswered-container {
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+  .answer-unanswered-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
 .answered-questions {
   display: flex;
   align-items: center;
@@ -95,15 +108,21 @@
 
 .answer-title {
   color: #496387;
-  font-size: 18px;
+  font-size: 16px;
   font-family: 'Roboto';
-  margin-left: 20px;
+  margin-left: 15px;
 }
 
 .un-answered-questions {
   display: flex;
   align-items: center;
 }
+
+/* @media screen and (min-width: 576px) {
+  .un-answered-questions {
+    margin-left: 20px;
+  }
+} */
 
 .un-answer-score-container {
   background-color: transparent;
@@ -124,9 +143,9 @@
 
 .un-answer-title {
   color: #496387;
-  font-size: 18px;
+  font-size: 16px;
   font-family: 'Roboto';
-  margin-left: 20px;
+  margin-left: 15px;
 }
 
 .horizontal-line {
@@ -205,7 +224,7 @@
   background-color: transparent;
   color: #164687;
   cursor: pointer;
-  width: 400px;
+  min-width: 200px;
   max-width: 70%;
 }
 
@@ -351,29 +370,59 @@
   font-size: 16px;
   font-family: 'Roboto';
   border-radius: 6px;
-  /* display: flex;
+  display: flex;
   flex-direction: column;
-  justify-content: space-between; */
+  justify-content: space-between;
+}
+
+.question-hint-next-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+@media screen and (min-width: 576px) {
+  .question-hint-next-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 30px;
+  }
 }
 
 .question-select-hint-container {
-  align-self: flex-end;
   background-color: #fef3c7;
-  padding: 5px 10px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   border-radius: 10px;
+  max-width: 250px;
+  margin-bottom: 20px;
+}
+
+@media screen and (min-width: 576px) {
+  .question-select-hint-container {
+    margin-bottom: 0;
+    max-width: 350px;
+  }
 }
 
 .question-select-hint-image {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 .question-select-hint {
   color: #d97706;
-  font-size: 14px;
+  font-size: 12px;
   font-family: 'Roboto';
+  padding-left: 10px;
+}
+
+@media screen and (min-width: 576px) {
+  .question-select-hint {
+    font-size: 15px;
+    padding-left: 15px;
+  }
 }
 
 .next-question-button-container {

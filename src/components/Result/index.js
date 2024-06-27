@@ -23,7 +23,7 @@ const Result = props => {
         const resultTiming = 600 - resultTime
 
         const hours = `${
-          parseInt(resultTiming / 60 / 60) > 9 ? '' : 0
+          parseInt(resultTiming / 60 / 60) > 9 ? '' : '0'
         }${parseInt(resultTiming / 60 / 60)}`
 
         const minutes = `${

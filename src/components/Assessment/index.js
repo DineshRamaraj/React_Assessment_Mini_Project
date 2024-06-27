@@ -1,13 +1,11 @@
 import Cookies from 'js-cookie'
 import {v4 as uuid} from 'uuid'
 import Loader from 'react-loader-spinner'
-import {Redirect} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom'
 import {Component} from 'react'
-
 import Header from '../Header'
 import Failure from '../Failure'
-import SideContainer from '../SideAssessment'
-import ContextComponent from '../../Context/ContextComponent'
+import ContextContainer from '../../Context/ContextComponent'
 import './index.css'
 
 const apiStatusConstants = {
@@ -45,7 +43,6 @@ class Assessment extends Component {
   interval = null
 
   componentDidMount() {
-    this.setState(prevState => ({displayTime: prevState.displayTime * 60}))
     this.triggerTime()
     this.getQuestionsList()
   }
@@ -59,9 +56,11 @@ class Assessment extends Component {
       this.setState(
         prevState => ({displayTime: prevState.displayTime - 1}),
         () => {
-          const {displayTime} = this.state
+          const {score, displayTime} = this.state
           if (displayTime === 0) {
             clearInterval(this.interval)
+            const {submitAnswer} = this.context
+            submitAnswer(score, displayTime)
             const {history} = this.props
             history.replace('/time-up')
           }
@@ -71,9 +70,12 @@ class Assessment extends Component {
   }
 
   getQuestionsList = async () => {
-    this.setState({apiStatus: apiStatusConstants.inProgress})
-    const apiUrl = 'https://apis.ccbp.in/assess/questions'
+    this.setState(prevState => ({
+      displayTime: prevState.displayTime * 60,
+      apiStatus: apiStatusConstants.inProgress,
+    }))
     const jwtToken = Cookies.get('jwt_token')
+    const apiUrl = `https://apis.ccbp.in/assess/questions`
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -81,30 +83,30 @@ class Assessment extends Component {
       method: 'GET',
     }
 
-    const response = await fetch(apiUrl, options)
-    const data = await response.json()
-    const updatedData = data.questions.map(eachItem => ({
-      id: eachItem.id,
-      optionsType: eachItem.options_type,
-      questionText: eachItem.question_text,
-      options: eachItem.options.map(optionItem => ({
-        id: optionItem.id,
-        text: optionItem.text,
-        isCorrect: optionItem.is_correct,
-      })),
-    }))
-    this.numberOfQuestions(updatedData.length)
-    console.log(updatedData)
-    if (response.ok) {
-      this.setState({
-        questionList: updatedData,
-        apiStatus: apiStatusConstants.success,
-        unAnsweredScore: updatedData.length,
-      })
-    } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+    try {
+      const response = await fetch(apiUrl, options)
+      if (response.ok) {
+        const data = await response.json()
+        const updatedData = data.questions.map(eachItem => ({
+          id: eachItem.id,
+          optionsType: eachItem.options_type,
+          questionText: eachItem.question_text,
+          options: eachItem.options.map(optionItem => ({
+            id: optionItem.id,
+            text: optionItem.text,
+            isCorrect: optionItem.is_correct,
+          })),
+        }))
+        this.numberOfQuestions(updatedData.length)
+        console.log(updatedData)
+        this.setState({
+          questionList: updatedData,
+          apiStatus: apiStatusConstants.success,
+          unAnsweredScore: updatedData.length,
+        })
+      }
+    } catch (error) {
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
@@ -221,6 +223,7 @@ class Assessment extends Component {
           <li className="question-default-item" key={eachItem.id}>
             <button
               id={eachItem.id}
+              value={eachItem.id}
               type="button"
               className={
                 currentAnswerId === eachItem.id
@@ -266,6 +269,7 @@ class Assessment extends Component {
             <li className="question-image-item" key={eachItem.id}>
               <button
                 id={eachItem.id}
+                value={eachItem.id}
                 type="button"
                 className={
                   currentAnswerId === eachItem.id
@@ -328,34 +332,23 @@ class Assessment extends Component {
     // console.log(currentAnswerId)
 
     return (
-      <>
-        <select
-          value={currentAnswerId}
-          onChange={onChangeSelectItem}
-          className="question-select-container"
-        >
-          {options.map(eachItem => (
-            <option
-              id={eachItem.id}
-              key={eachItem.id}
-              value={eachItem.id}
-              className="question-select-item"
-            >
-              {eachItem.text}
-            </option>
-          ))}
-        </select>
-        <div className="question-select-hint-container">
-          <img
-            className="question-select-hint-image"
-            src="https://res.cloudinary.com/dhwz560kk/image/upload/v1719322655/ualsfvbwn1nz3eampdyu.png"
-            alt="SINGLE_SELECT"
-          />
-          <p className="question-select-hint">
-            First option is selected by default
-          </p>
-        </div>
-      </>
+      <select
+        id={currentAnswerId}
+        value={currentAnswerId}
+        onChange={onChangeSelectItem}
+        className="question-select-container"
+      >
+        {options.map(eachItem => (
+          <option
+            id={eachItem.id}
+            key={eachItem.id}
+            value={eachItem.id}
+            className="question-select-item"
+          >
+            {eachItem.text}
+          </option>
+        ))}
+      </select>
     )
   }
 
@@ -416,58 +409,169 @@ class Assessment extends Component {
     )
   }
 
-  renderSuccess = () => {
+  clickSubmit = () => {
+    const {score, displayTime} = this.state
+    const {submitAnswer} = this.context
+    submitAnswer(score, displayTime)
+  }
+
+  SideContainer = () => {
     const {
-      score,
-      questionList,
-      currentQuestion,
+      displayTime,
       answeredScore,
       unAnsweredScore,
       questionNumberList,
-      displayTime,
+      questionList,
+      clickQuestionNumber,
+      /* stopTriggerTime, */
     } = this.state
+
+    const questionLength = questionList.length
+
+    const hours = `${parseInt(displayTime / 60 / 60) > 9 ? '' : '0'}${parseInt(
+      displayTime / 60 / 60,
+    )}`
+
+    const minutes = `${parseInt(displayTime / 60) > 9 ? '' : '0'}${parseInt(
+      displayTime / 60,
+    )}`
+
+    const seconds = `${parseInt(displayTime % 60) > 9 ? '' : '0'}${parseInt(
+      displayTime % 60,
+    )}`
+
+    return (
+      <div className="assessment-side-container">
+        <div className="assessment-time-question-number-container">
+          <div className="time-container">
+            <p className="time-title">Time Left</p>
+            <p className="display-time">{`${hours}:${minutes}:${seconds}`}</p>
+          </div>
+          <div className="answer-details-container">
+            <div className="answer-unanswered-container">
+              <div className="answered-questions">
+                <div className="answer-score-container">
+                  <p className="answer-score">{answeredScore}</p>
+                </div>
+                <p className="answer-title">Answered Questions</p>
+              </div>
+              <div className="un-answered-questions">
+                <div className="un-answer-score-container">
+                  <p className="un-answer-score">{unAnsweredScore}</p>
+                </div>
+                <p className="un-answer-title">Unanswered Questions</p>
+              </div>
+            </div>
+            <hr className="horizontal-line" />
+            <h1 className="question-topic">Questions ({questionLength})</h1>
+            <ul className="questions-list-container">
+              {questionNumberList.map(eachNumber => {
+                const onClickQuestionNumber = () => {
+                  clickQuestionNumber(eachNumber.questionNumber)
+                }
+                const eachItemStatus = () => {
+                  if (eachNumber.questionStatus === questionStatus.initial) {
+                    return 'initial-status'
+                  }
+                  if (eachNumber.questionStatus === questionStatus.inProgress) {
+                    return 'progress-status'
+                  }
+                  return 'answered-status'
+                }
+
+                const questionsNumberStatus =
+                  eachNumber.questionStatus !== 'SUCCESS'
+                    ? 'questions-number-status'
+                    : ''
+
+                return (
+                  <li
+                    className={`${eachItemStatus()} questions-item`}
+                    key={eachNumber.id}
+                  >
+                    <button
+                      type="button"
+                      className={`${questionsNumberStatus} questions-number-button`}
+                      onClick={onClickQuestionNumber}
+                    >
+                      {eachNumber.questionNumber + 1}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </div>
+        <div className="submit-button-container">
+          <Link to="/results">
+            <button
+              type="button"
+              className="submit-assessment-button"
+              onClick={this.clickSubmit}
+            >
+              Submit Assessment
+            </button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  renderSuccess = () => {
+    const {questionList, currentQuestion} = this.state
     const {questionText} = questionList[currentQuestion]
     // console.log(questionList.length)
 
     return (
       <>
         <Header />
-        <div className="main-assessment-container">
-          <SideContainer
-            displayTime={displayTime}
-            score={score}
-            stopTriggerTime={this.stopTriggerTime}
-            answeredScore={answeredScore}
-            unAnsweredScore={unAnsweredScore}
-            questionLength={questionList.length}
-            questionNumberList={questionNumberList}
-            clickQuestionNumber={this.clickQuestionNumber}
-            submitAssessment={this.submitAssessment}
-          />
-          <div className="question-and-answer-container">
-            <div className="question-choice-container">
-              <div className="question-number-and-text-container">
-                <span className="question-number">{currentQuestion + 1}.</span>
-                <p className="question-text">{questionText}</p>
-              </div>
-              <hr className="question-hr-line" />
-              <div>{this.renderMainAnswerOptionsContainer()}</div>
-            </div>
-            <div>
-              {questionList.length - 1 !== currentQuestion && (
-                <div className="next-question-button-container">
-                  <button
-                    type="button"
-                    className="next-question-button"
-                    onClick={this.clickNextButton}
-                  >
-                    Next Question
-                  </button>
+        <ul className="main-assessment-container">
+          <li>{this.SideContainer()}</li>
+          <li>
+            <div className="question-and-answer-container">
+              <div className="question-choice-container">
+                <div className="question-number-and-text-container">
+                  <span className="question-number">
+                    {currentQuestion + 1}.
+                  </span>
+                  <p className="question-text">{questionText}</p>
                 </div>
-              )}
+                <hr className="question-hr-line" />
+                <div>{this.renderMainAnswerOptionsContainer()}</div>
+              </div>
+              <div className="question-hint-next-container">
+                <div className="question-select-hint-container">
+                  {questionList[currentQuestion].optionsType ===
+                  'SINGLE_SELECT' ? (
+                    <>
+                      <img
+                        className="question-select-hint-image"
+                        src="https://res.cloudinary.com/dhwz560kk/image/upload/v1719322655/ualsfvbwn1nz3eampdyu.png"
+                        alt="SINGLE_SELECT"
+                      />
+                      <p className="question-select-hint">
+                        First option is selected by default
+                      </p>
+                    </>
+                  ) : (
+                    ' '
+                  )}
+                </div>
+                <div className="next-question-button-container">
+                  {questionList.length - 1 !== currentQuestion && (
+                    <button
+                      type="button"
+                      className="next-question-button"
+                      onClick={this.clickNextButton}
+                    >
+                      Next Question
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </>
     )
   }
@@ -481,7 +585,17 @@ class Assessment extends Component {
     </>
   )
 
-  renderFailure = () => <Failure />
+  onRetry = () => {
+    this.setState(
+      {apiStatus: apiStatusConstants.initial},
+      this.getQuestionsList,
+      this.triggerTime,
+    )
+    const {submitAnswer} = this.context
+    submitAnswer(0, 0)
+  }
+
+  renderFailure = () => <Failure onRetry={this.onRetry} />
 
   render() {
     const jwtToken = Cookies.get('jwt_token')
@@ -502,4 +616,7 @@ class Assessment extends Component {
     }
   }
 }
+
+Assessment.contextType = ContextContainer
+
 export default Assessment

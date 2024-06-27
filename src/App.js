@@ -17,13 +17,12 @@ class App extends Component {
     score: 0,
   }
 
+  //   componentWillUnmount() {
+  //     this.setState({score: 0, resultTime: 0})
+  //   }
+
   submitAnswer = (myScore, displayTime) => {
     this.setState({score: myScore, resultTime: displayTime})
-    console.log('hljdl;kjal;kdjfl')
-  }
-
-  onRetry = () => {
-    this.setState({resultTime: 0, score: 0})
   }
 
   clickReattempt = () => {
@@ -37,7 +36,6 @@ class App extends Component {
         value={{
           score,
           resultTime,
-          onRetry: this.onRetry,
           submitAnswer: this.submitAnswer,
           clickReattempt: this.clickReattempt,
         }}
@@ -47,7 +45,7 @@ class App extends Component {
           <Route exact path="/login" component={Login} />
           <Route exact path="/assessment" component={Assessment} />
           <Route exact path="/results" component={Result} />
-          <Route exact path="/time-up" component={TimeUp} />
+          <Route exact path="/time-up" component={TimeUp} score={score} />
           <Route exact path="/failure" component={Failure} />
           <Route exact path="/bad-path" component={NotFound} />
           <Redirect to="/bad-path" />
