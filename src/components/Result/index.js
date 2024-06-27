@@ -2,6 +2,7 @@ import Cookies from 'js-cookie'
 import {Redirect} from 'react-router-dom'
 import ContextContainer from '../../Context/ContextComponent'
 import Header from '../Header'
+import TimeUp from '../TimeUp'
 import './index.css'
 
 const Result = props => {
@@ -18,6 +19,10 @@ const Result = props => {
           clickReattempt()
           const {history} = props
           history.replace('/assessment')
+        }
+
+        if (resultTime === 0) {
+          return <TimeUp />
         }
 
         const resultTiming = 600 - resultTime

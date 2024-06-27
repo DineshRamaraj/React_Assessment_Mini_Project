@@ -5,7 +5,6 @@ import Login from './components/Login'
 import Home from './components/Home'
 import Assessment from './components/Assessment'
 import Result from './components/Result'
-import TimeUp from './components/TimeUp'
 import NotFound from './components/NotFound'
 import Failure from './components/Failure'
 import ContextContainer from './Context/ContextComponent'
@@ -45,7 +44,6 @@ class App extends Component {
           <Route exact path="/login" component={Login} />
           <Route exact path="/assessment" component={Assessment} />
           <Route exact path="/results" component={Result} />
-          <Route exact path="/time-up" component={TimeUp} score={score} />
           <Route exact path="/failure" component={Failure} />
           <Route exact path="/bad-path" component={NotFound} />
           <Redirect to="/bad-path" />

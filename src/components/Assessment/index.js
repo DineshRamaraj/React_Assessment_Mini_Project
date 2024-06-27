@@ -62,7 +62,7 @@ class Assessment extends Component {
             const {submitAnswer} = this.context
             submitAnswer(score, displayTime)
             const {history} = this.props
-            history.replace('/time-up')
+            history.replace('/results')
           }
         },
       )
@@ -441,7 +441,7 @@ class Assessment extends Component {
     )}`
 
     return (
-      <div className="assessment-side-container">
+      <>
         <div className="assessment-time-question-number-container">
           <div className="time-container">
             <p className="time-title">Time Left</p>
@@ -513,7 +513,7 @@ class Assessment extends Component {
             </button>
           </Link>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -526,48 +526,44 @@ class Assessment extends Component {
       <>
         <Header />
         <ul className="main-assessment-container">
-          <li>{this.SideContainer()}</li>
-          <li>
-            <div className="question-and-answer-container">
-              <div className="question-choice-container">
-                <div className="question-number-and-text-container">
-                  <span className="question-number">
-                    {currentQuestion + 1}.
-                  </span>
-                  <p className="question-text">{questionText}</p>
-                </div>
-                <hr className="question-hr-line" />
-                <div>{this.renderMainAnswerOptionsContainer()}</div>
+          <li className="main-side-container">{this.SideContainer()}</li>
+          <li className="question-and-answer-container">
+            <div className="question-choice-container">
+              <div className="question-number-and-text-container">
+                <span className="question-number">{currentQuestion + 1}.</span>
+                <p className="question-text">{questionText}</p>
               </div>
-              <div className="question-hint-next-container">
-                <div className="question-select-hint-container">
-                  {questionList[currentQuestion].optionsType ===
-                  'SINGLE_SELECT' ? (
-                    <>
-                      <img
-                        className="question-select-hint-image"
-                        src="https://res.cloudinary.com/dhwz560kk/image/upload/v1719322655/ualsfvbwn1nz3eampdyu.png"
-                        alt="SINGLE_SELECT"
-                      />
-                      <p className="question-select-hint">
-                        First option is selected by default
-                      </p>
-                    </>
-                  ) : (
-                    ' '
-                  )}
-                </div>
-                <div className="next-question-button-container">
-                  {questionList.length - 1 !== currentQuestion && (
-                    <button
-                      type="button"
-                      className="next-question-button"
-                      onClick={this.clickNextButton}
-                    >
-                      Next Question
-                    </button>
-                  )}
-                </div>
+              <hr className="question-hr-line" />
+              <div>{this.renderMainAnswerOptionsContainer()}</div>
+            </div>
+            <div className="question-hint-next-container">
+              <div className="question-select-hint-container">
+                {questionList[currentQuestion].optionsType ===
+                'SINGLE_SELECT' ? (
+                  <>
+                    <img
+                      className="question-select-hint-image"
+                      src="https://res.cloudinary.com/dhwz560kk/image/upload/v1719322655/ualsfvbwn1nz3eampdyu.png"
+                      alt="SINGLE_SELECT"
+                    />
+                    <p className="question-select-hint">
+                      First option is selected by default
+                    </p>
+                  </>
+                ) : (
+                  ' '
+                )}
+              </div>
+              <div className="next-question-button-container">
+                {questionList.length - 1 !== currentQuestion && (
+                  <button
+                    type="button"
+                    className="next-question-button"
+                    onClick={this.clickNextButton}
+                  >
+                    Next Question
+                  </button>
+                )}
               </div>
             </div>
           </li>
@@ -587,7 +583,7 @@ class Assessment extends Component {
 
   onRetry = () => {
     this.setState(
-      {apiStatus: apiStatusConstants.initial},
+      {apiStatus: apiStatusConstants.inProgress},
       this.getQuestionsList,
       this.triggerTime,
     )
