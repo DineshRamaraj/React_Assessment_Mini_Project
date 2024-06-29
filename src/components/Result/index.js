@@ -57,7 +57,7 @@ const Result = props => {
                 <div className="result-time-container">
                   <p className="result-time-title">Time Taken: </p>
                   <p className="result-time">
-                    {`${hours} : ${minutes} : ${seconds}`}
+                    {`${hours}:${minutes}:${seconds}`}
                   </p>
                 </div>
                 <div className="result-score-container">

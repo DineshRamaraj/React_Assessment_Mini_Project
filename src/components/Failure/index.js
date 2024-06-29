@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom'
 import Header from '../Header'
 import './index.css'
 
@@ -18,13 +19,15 @@ const Failure = props => {
           />
           <h1 className="failure-heading">Oops! Something Went Wrong</h1>
           <p className="failure-description">We are having some trouble</p>
-          <button
-            type="button"
-            className="failure-button"
-            onClick={onClickRetry}
-          >
-            Retry
-          </button>
+          <Link to="/assessment">
+            <button
+              type="button"
+              className="failure-button"
+              onClick={onClickRetry}
+            >
+              Retry
+            </button>
+          </Link>
         </div>
       </div>
     </>

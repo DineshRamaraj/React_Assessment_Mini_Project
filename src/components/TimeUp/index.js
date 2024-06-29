@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import {Redirect} from 'react-router-dom'
+import {Redirect, withRouter} from 'react-router-dom'
 import ContextContainer from '../../Context/ContextComponent'
 import Header from '../Header'
 import './index.css'
@@ -32,7 +32,7 @@ const TimeUp = props => {
                 />
                 <h1 className="time-up-heading">Time is up!</h1>
                 <p className="time-up-description">
-                  You did not complete the assessment within the time{' '}
+                  You did not complete the assessment within the time
                 </p>
                 <div className="time-up-score-container">
                   <p className="time-up-score-title">Your score: </p>
@@ -54,4 +54,4 @@ const TimeUp = props => {
   )
 }
 
-export default TimeUp
+export default withRouter(TimeUp)

@@ -48,6 +48,10 @@ class Assessment extends Component {
 
   isCorrect = false
 
+  isEnterFirstTime = true
+
+  isFailure = 'FAILURE'
+
   componentDidMount() {
     this.triggerTime()
     this.getQuestionsList()
@@ -91,7 +95,9 @@ class Assessment extends Component {
 
     try {
       const response = await fetch(apiUrl, options)
+      console.log(response.ok)
       if (response.ok) {
+        console.log('1')
         const data = await response.json()
         const updatedData = data.questions.map(eachItem => ({
           id: eachItem.id,
@@ -104,7 +110,7 @@ class Assessment extends Component {
           })),
         }))
         this.numberOfQuestions(updatedData.length)
-        console.log(updatedData)
+        // console.log(updatedData)
         this.setState({
           questionList: updatedData,
           apiStatus: apiStatusConstants.success,
@@ -112,6 +118,7 @@ class Assessment extends Component {
         })
       }
     } catch (error) {
+      console.log('2')
       this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
@@ -182,6 +189,14 @@ class Assessment extends Component {
       eachItem => eachItem.id === event.target.id,
     )
 
+    if (this.isEnterFirstTime === true) {
+      this.isEnterFirstTime = false
+      this.setState(prevState => ({
+        answeredScore: prevState.answeredScore + 1,
+        unAnsweredScore: prevState.unAnsweredScore - 1,
+      }))
+    }
+
     if (
       currentAnswerId === undefined &&
       findItem.isCorrect === 'true' &&
@@ -244,7 +259,14 @@ class Assessment extends Component {
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === valueID,
     )
-    console.log('FindItem: ', findItem)
+
+    if (this.isEnterFirstTime === true) {
+      this.isEnterFirstTime = false
+      this.setState(prevState => ({
+        answeredScore: prevState.answeredScore + 1,
+        unAnsweredScore: prevState.unAnsweredScore - 1,
+      }))
+    }
 
     if (
       currentAnswerId !== undefined &&
@@ -306,8 +328,10 @@ class Assessment extends Component {
     const {questionList, currentQuestion} = this.state
     const {optionsType} = questionList[currentQuestion + 1]
     const selectItemId = questionList[currentQuestion + 1].options[0].id
-    // console.log(currentAnswerId)
+
     this.isCorrect = false
+    this.isEnterFirstTime = true
+
     if (optionsType === 'SINGLE_SELECT') {
       // console.log(selectItemId)
       this.setState(
@@ -317,19 +341,13 @@ class Assessment extends Component {
         this.changeQuestionInitialToProgress,
       )
       setTimeout(() => {
-        this.setState(prevState => ({
-          currentAnswerId: selectItemId,
-          answeredScore: prevState.answeredScore + 1,
-          unAnsweredScore: prevState.unAnsweredScore - 1,
-        }))
+        this.setState({currentAnswerId: selectItemId})
         this.changeOption(selectItemId)
-      }, 100)
+      }, 10)
     } else {
       this.setState(
         prevState => ({
           currentQuestion: prevState.currentQuestion + 1,
-          answeredScore: prevState.answeredScore + 1,
-          unAnsweredScore: prevState.unAnsweredScore - 1,
         }),
         this.changeQuestionInitialToProgress,
       )
@@ -439,7 +457,17 @@ class Assessment extends Component {
 
   onRetry = () => {
     this.setState(
-      {apiStatus: apiStatusConstants.inProgress},
+      {
+        apiStatus: apiStatusConstants.initial,
+        questionNumberList: [],
+        questionList: [],
+        currentQuestion: 0,
+        currentAnswerId: undefined,
+        answeredScore: 0,
+        unAnsweredScore: 0,
+        score: 0,
+        displayTime: 10,
+      },
       this.getQuestionsList,
       this.triggerTime,
     )
