@@ -1,12 +1,16 @@
 import Cookies from 'js-cookie'
 import {v4 as uuid} from 'uuid'
 import Loader from 'react-loader-spinner'
-import {Redirect, Link} from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 import {Component} from 'react'
 import Header from '../Header'
 import Failure from '../Failure'
 import ContextContainer from '../../Context/ContextComponent'
 import './index.css'
+import SingleSelect from '../SingleSelect'
+import ImageOptions from '../ImageOption'
+import DefaultOptions from '../DefaultOptions'
+import SideContainer from '../SideContainer'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -41,6 +45,8 @@ class Assessment extends Component {
   }
 
   interval = null
+
+  isCorrect = false
 
   componentDidMount() {
     this.triggerTime()
@@ -139,9 +145,6 @@ class Assessment extends Component {
       eachOption => eachOption.id === currentAnswerId,
     )
     const isSuccessId = isSuccessItem ? isSuccessItem.id : undefined
-    // console.log('successId: ', isSuccessId)
-
-    // console.log(optionsType)
 
     this.setState(prevState => ({
       questionNumberList: prevState.questionNumberList.map(eachItem => {
@@ -174,135 +177,81 @@ class Assessment extends Component {
 
   clickOption = event => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    // console.log('click options')
-    // console.log(score)
-    // console.log(questionList[currentQuestion])
 
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === event.target.id,
     )
-    // console.log('successId: ', isSuccessId)
 
-    // console.log(optionsType)
-
-    if (findItem) {
-      this.setState(prevState => ({
-        answeredScore: prevState.answeredScore + 1,
-        unAnsweredScore: prevState.unAnsweredScore - 1,
-      }))
-    }
-    // console.log('findItem: ', findItem)
-
-    if (currentAnswerId === undefined && findItem.isCorrect === 'true') {
-      this.setState(prevState => ({
+    if (
+      currentAnswerId === undefined &&
+      findItem.isCorrect === 'true' &&
+      this.isCorrect === false
+    ) {
+      this.isCorrect = true
+      const {score} = this.state
+      this.setState({
         currentAnswerId: event.target.id,
-        score: prevState.score + 1,
-      }))
-    } else if (currentAnswerId !== undefined && findItem.isCorrect === 'true') {
-      this.setState(prevState => ({
+        score: score + 1,
+      })
+    } else if (
+      currentAnswerId !== undefined &&
+      findItem.isCorrect === 'true' &&
+      this.isCorrect === false
+    ) {
+      this.isCorrect = true
+      const {score} = this.state
+      this.setState({
         currentAnswerId: event.target.id,
-        score: prevState.score + 1,
-      }))
-    } else if (findItem.isCorrect === 'false') {
+        score: score + 1,
+      })
+    } else if (findItem.isCorrect === 'false' && this.isCorrect === true) {
+      this.isCorrect = false
       this.setState(prevState => ({
         currentAnswerId: event.target.id,
         score: prevState.score - 1 < 0 ? 0 : prevState.score - 1,
       }))
+    } else {
+      this.setState({currentAnswerId: event.target.id})
     }
   }
 
   renderDefaultOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    const {options} = questionList[currentQuestion]
-    // console.log(options)
-    // console.log(currentQuestion)
-    // console.log(currentAnswerId)
     return (
-      <ul className="question-default-container">
-        {options.map(eachItem => (
-          <li className="question-default-item" key={eachItem.id}>
-            <button
-              id={eachItem.id}
-              value={eachItem.id}
-              type="button"
-              className={
-                currentAnswerId === eachItem.id
-                  ? 'active-default-button question-and-answer-default-button'
-                  : 'question-and-answer-default-button'
-              }
-              onClick={this.clickOption}
-            >
-              {eachItem.text}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <DefaultOptions
+        questionList={questionList}
+        currentQuestion={currentQuestion}
+        currentAnswerId={currentAnswerId}
+        clickOption={this.clickOption}
+      />
     )
   }
 
   renderImageOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    const {options} = questionList[currentQuestion]
-
     return (
-      <ul className="question-image-container">
-        {options.map(eachItem => {
-          let optionsImage
-          if (eachItem.text === 'flex start') {
-            optionsImage =
-              'https://res.cloudinary.com/dhwz560kk/image/upload/v1711733196/t8s3g8v5szdaltu5wlf9.png'
-          }
-          if (eachItem.text === 'flex center') {
-            optionsImage =
-              'https://res.cloudinary.com/dhwz560kk/image/upload/v1711735685/ysa27uxni7piyxlohkm7.png'
-          }
-          if (eachItem.text === 'space between') {
-            optionsImage =
-              'https://res.cloudinary.com/dhwz560kk/image/upload/v1711735513/bx8jx0jxgd5zbwzvdtlv.png'
-          }
-          if (eachItem.text === 'flex end') {
-            optionsImage =
-              'https://res.cloudinary.com/dhwz560kk/image/upload/v1711735513/zdylxw8fqvyn4dbvwu66.png'
-          }
-
-          return (
-            <li className="question-image-item" key={eachItem.id}>
-              <button
-                id={eachItem.id}
-                value={eachItem.id}
-                type="button"
-                className={
-                  currentAnswerId === eachItem.id
-                    ? 'active-image-button question-and-answer-image-button'
-                    : 'question-and-answer-image-button'
-                }
-                onClick={this.clickOption}
-              >
-                <img
-                  id={eachItem.id}
-                  src={optionsImage}
-                  alt={eachItem.text}
-                  className="question-button-image"
-                />
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      <ImageOptions
+        questionList={questionList}
+        currentQuestion={currentQuestion}
+        currentAnswerId={currentAnswerId}
+        clickOption={this.clickOption}
+      />
     )
   }
 
   changeOption = valueID => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === valueID,
     )
+    console.log('FindItem: ', findItem)
 
-    console.log(findItem)
-
-    if (currentAnswerId !== undefined && findItem.isCorrect === 'true') {
-      //   console.log('It is working')
+    if (
+      currentAnswerId !== undefined &&
+      findItem.isCorrect === 'true' &&
+      this.isCorrect === false
+    ) {
+      this.isCorrect = true
       this.setState(prevState => ({
         currentAnswerId: valueID,
         score: prevState.score + 1,
@@ -310,45 +259,27 @@ class Assessment extends Component {
     } else if (
       findItem.isCorrect === 'false' &&
       currentAnswerId !== undefined &&
-      findItem.id !== valueID
+      this.isCorrect === true
     ) {
+      this.isCorrect = false
       this.setState(prevState => ({
         currentAnswerId: valueID,
         score: prevState.score - 1 < 0 ? 0 : prevState.score - 1,
       }))
+    } else {
+      this.setState({currentAnswerId: valueID})
     }
   }
 
   renderSingleSelectOptions = () => {
     const {questionList, currentQuestion, currentAnswerId} = this.state
-    const {options} = questionList[currentQuestion]
-
-    let defaultSelection = questionList[currentQuestion].options[0].id
-    const onChangeSelectItem = event => {
-      defaultSelection = event.target.value
-      this.changeOption(defaultSelection)
-    }
-
-    // console.log(currentAnswerId)
-
     return (
-      <select
-        id={currentAnswerId}
-        value={currentAnswerId}
-        onChange={onChangeSelectItem}
-        className="question-select-container"
-      >
-        {options.map(eachItem => (
-          <option
-            id={eachItem.id}
-            key={eachItem.id}
-            value={eachItem.id}
-            className="question-select-item"
-          >
-            {eachItem.text}
-          </option>
-        ))}
-      </select>
+      <SingleSelect
+        questionList={questionList}
+        currentQuestion={currentQuestion}
+        currentAnswerId={currentAnswerId}
+        changeOption={this.changeOption}
+      />
     )
   }
 
@@ -376,6 +307,7 @@ class Assessment extends Component {
     const {optionsType} = questionList[currentQuestion + 1]
     const selectItemId = questionList[currentQuestion + 1].options[0].id
     // console.log(currentAnswerId)
+    this.isCorrect = false
     if (optionsType === 'SINGLE_SELECT') {
       // console.log(selectItemId)
       this.setState(
@@ -396,6 +328,8 @@ class Assessment extends Component {
       this.setState(
         prevState => ({
           currentQuestion: prevState.currentQuestion + 1,
+          answeredScore: prevState.answeredScore + 1,
+          unAnsweredScore: prevState.unAnsweredScore - 1,
         }),
         this.changeQuestionInitialToProgress,
       )
@@ -422,98 +356,20 @@ class Assessment extends Component {
       unAnsweredScore,
       questionNumberList,
       questionList,
-      clickQuestionNumber,
-      /* stopTriggerTime, */
     } = this.state
 
     const questionLength = questionList.length
-
-    const hours = `${parseInt(displayTime / 60 / 60) > 9 ? '' : '0'}${parseInt(
-      displayTime / 60 / 60,
-    )}`
-
-    const minutes = `${parseInt(displayTime / 60) > 9 ? '' : '0'}${parseInt(
-      displayTime / 60,
-    )}`
-
-    const seconds = `${parseInt(displayTime % 60) > 9 ? '' : '0'}${parseInt(
-      displayTime % 60,
-    )}`
-
     return (
-      <>
-        <div className="assessment-time-question-number-container">
-          <div className="time-container">
-            <p className="time-title">Time Left</p>
-            <p className="display-time">{`${hours}:${minutes}:${seconds}`}</p>
-          </div>
-          <div className="answer-details-container">
-            <div className="answer-unanswered-container">
-              <div className="answered-questions">
-                <div className="answer-score-container">
-                  <p className="answer-score">{answeredScore}</p>
-                </div>
-                <p className="answer-title">Answered Questions</p>
-              </div>
-              <div className="un-answered-questions">
-                <div className="un-answer-score-container">
-                  <p className="un-answer-score">{unAnsweredScore}</p>
-                </div>
-                <p className="un-answer-title">Unanswered Questions</p>
-              </div>
-            </div>
-            <hr className="horizontal-line" />
-            <h1 className="question-topic">Questions ({questionLength})</h1>
-            <ul className="questions-list-container">
-              {questionNumberList.map(eachNumber => {
-                const onClickQuestionNumber = () => {
-                  clickQuestionNumber(eachNumber.questionNumber)
-                }
-                const eachItemStatus = () => {
-                  if (eachNumber.questionStatus === questionStatus.initial) {
-                    return 'initial-status'
-                  }
-                  if (eachNumber.questionStatus === questionStatus.inProgress) {
-                    return 'progress-status'
-                  }
-                  return 'answered-status'
-                }
-
-                const questionsNumberStatus =
-                  eachNumber.questionStatus !== 'SUCCESS'
-                    ? 'questions-number-status'
-                    : ''
-
-                return (
-                  <li
-                    className={`${eachItemStatus()} questions-item`}
-                    key={eachNumber.id}
-                  >
-                    <button
-                      type="button"
-                      className={`${questionsNumberStatus} questions-number-button`}
-                      onClick={onClickQuestionNumber}
-                    >
-                      {eachNumber.questionNumber + 1}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </div>
-        <div className="submit-button-container">
-          <Link to="/results">
-            <button
-              type="button"
-              className="submit-assessment-button"
-              onClick={this.clickSubmit}
-            >
-              Submit Assessment
-            </button>
-          </Link>
-        </div>
-      </>
+      <SideContainer
+        displayTime={displayTime}
+        answeredScore={answeredScore}
+        questionLength={questionLength}
+        questionStatus={questionStatus}
+        unAnsweredScore={unAnsweredScore}
+        questionNumberList={questionNumberList}
+        clickQuestionNumber={this.clickQuestionNumber}
+        clickSubmit={this.clickSubmit}
+      />
     )
   }
 
