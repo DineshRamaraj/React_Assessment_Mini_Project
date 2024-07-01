@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie'
+jiimport Cookies from 'js-cookie'
 import {v4 as uuid} from 'uuid'
 import Loader from 'react-loader-spinner'
 import {Redirect} from 'react-router-dom'
@@ -92,10 +92,9 @@ class Assessment extends Component {
       },
       method: 'GET',
     }
-
-    try {
       const response = await fetch(apiUrl, options)
       console.log(response.ok)
+    
       if (response.ok) {
         console.log('1')
         const data = await response.json()
@@ -116,9 +115,7 @@ class Assessment extends Component {
           apiStatus: apiStatusConstants.success,
           unAnsweredScore: updatedData.length,
         })
-      }
-    } catch (error) {
-      console.log('2')
+    } else {
       this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
