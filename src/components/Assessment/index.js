@@ -413,7 +413,10 @@ class Assessment extends Component {
         <Header />
         <ul className="main-assessment-container">
           <li className="main-side-container">{this.SideContainer()}</li>
-          <li className="question-and-answer-container">
+          <li
+            className="question-and-answer-container"
+            data-testid="questionItem"
+          >
             <div className="question-choice-container">
               <div className="question-number-and-text-container">
                 <span className="question-number">{currentQuestion + 1}.</span>
