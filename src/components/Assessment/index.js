@@ -1,4 +1,4 @@
-jiimport Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 import {v4 as uuid} from 'uuid'
 import Loader from 'react-loader-spinner'
 import {Redirect} from 'react-router-dom'
@@ -50,8 +50,6 @@ class Assessment extends Component {
 
   isEnterFirstTime = true
 
-  isFailure = 'FAILURE'
-
   componentDidMount() {
     this.triggerTime()
     this.getQuestionsList()
@@ -85,36 +83,38 @@ class Assessment extends Component {
       apiStatus: apiStatusConstants.inProgress,
     }))
     const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = `https://apis.ccbp.in/assess/questions`
+    const apiUrl = 'https://apis.ccbp.in/assess/questions'
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
       method: 'GET',
     }
-      const response = await fetch(apiUrl, options)
-      console.log(response.ok)
-    
-      if (response.ok) {
-        console.log('1')
-        const data = await response.json()
-        const updatedData = data.questions.map(eachItem => ({
-          id: eachItem.id,
-          optionsType: eachItem.options_type,
-          questionText: eachItem.question_text,
-          options: eachItem.options.map(optionItem => ({
-            id: optionItem.id,
-            text: optionItem.text,
-            isCorrect: optionItem.is_correct,
-          })),
-        }))
-        this.numberOfQuestions(updatedData.length)
-        // console.log(updatedData)
-        this.setState({
-          questionList: updatedData,
-          apiStatus: apiStatusConstants.success,
-          unAnsweredScore: updatedData.length,
-        })
+    const response = await fetch(apiUrl, options)
+    // console.log(response.ok)
+
+    if (response.ok) {
+      //   console.log('1')
+      const data = await response.json()
+      //   console.log(data)
+      const updatedData = data.questions.map(eachItem => ({
+        id: eachItem.id,
+        optionsType: eachItem.options_type,
+        questionText: eachItem.question_text,
+        options: eachItem.options.map(optionItem => ({
+          id: optionItem.id,
+          text: optionItem.text,
+          imageUrl: optionItem.image_url,
+          isCorrect: optionItem.is_correct,
+        })),
+      }))
+      this.numberOfQuestions(updatedData.length)
+      // console.log(updatedData)
+      this.setState({
+        questionList: updatedData,
+        apiStatus: apiStatusConstants.success,
+        unAnsweredScore: updatedData.length,
+      })
     } else {
       this.setState({apiStatus: apiStatusConstants.failure})
     }
@@ -352,10 +352,25 @@ class Assessment extends Component {
   }
 
   clickQuestionNumber = questionNumber => {
-    this.setState(
-      {currentQuestion: questionNumber},
-      this.changeQuestionInitialToProgress,
-    )
+    const {questionList} = this.state
+    const {optionsType, options} = questionList[questionNumber]
+    // console.log(questionList[questionNumber])
+
+    if (optionsType === 'SINGLE_SELECT') {
+      const selectItemId = options[0].id
+      this.setState(
+        {currentQuestion: questionNumber, currentAnswerId: selectItemId},
+        this.changeQuestionInitialToProgress,
+      )
+      setTimeout(() => {
+        this.changeOption(selectItemId)
+      }, 10)
+    } else {
+      this.setState(
+        {currentQuestion: questionNumber},
+        this.changeQuestionInitialToProgress,
+      )
+    }
   }
 
   clickSubmit = () => {
