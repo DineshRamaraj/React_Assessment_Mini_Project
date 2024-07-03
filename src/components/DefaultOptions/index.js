@@ -1,5 +1,5 @@
 const DefaultOptions = props => {
-  const {questionList, currentQuestion, currentAnswerId, clickOption} = props
+  const {questionList, currentQuestion, answerId, clickOption} = props
   const {options} = questionList[currentQuestion]
 
   const onClickOption = event => {
@@ -15,7 +15,7 @@ const DefaultOptions = props => {
             value={eachItem.id}
             type="button"
             className={
-              currentAnswerId === eachItem.id
+              answerId === eachItem.id
                 ? 'active-default-button question-and-answer-default-button'
                 : 'question-and-answer-default-button'
             }

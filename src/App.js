@@ -24,9 +24,9 @@ class App extends Component {
     this.setState({score: myScore, resultTime: displayTime})
   }
 
-  clickReattempt = () => {
-    this.setState({resultTime: 0, score: 0})
-  }
+  //   clickReattempt = () => {
+  //     this.setState({resultTime: 0, score: 0})
+  //   }
 
   render() {
     const {score, resultTime} = this.state

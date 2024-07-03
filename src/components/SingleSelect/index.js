@@ -1,6 +1,16 @@
 const SingleSelect = props => {
-  const {questionList, currentQuestion, currentAnswerId, changeOption} = props
+  const {questionList, currentQuestion, answerId, changeOption} = props
   const {options} = questionList[currentQuestion]
+
+  let selectAnswerId = answerId || options[0].id
+
+  if (answerId !== undefined) {
+    selectAnswerId = answerId
+  } else {
+    selectAnswerId = options[0].id
+  }
+
+  console.log(selectAnswerId)
 
   const onChangeSelectItem = event => {
     changeOption(event.target.value)
@@ -8,14 +18,13 @@ const SingleSelect = props => {
 
   return (
     <select
-      id={currentAnswerId}
-      value={currentAnswerId}
+      id={`select-${currentQuestion}`}
+      value={selectAnswerId}
       onChange={onChangeSelectItem}
       className="question-select-container"
     >
       {options.map(eachItem => (
         <option
-          id={eachItem.id}
           key={eachItem.id}
           value={eachItem.id}
           className="question-select-item"

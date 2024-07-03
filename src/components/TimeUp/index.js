@@ -12,10 +12,9 @@ const TimeUp = props => {
   return (
     <ContextContainer.Consumer>
       {value => {
-        const {score, clickReattempt} = value
+        const {score} = value
 
         const onClickReattempt = () => {
-          clickReattempt()
           const {history} = props
           history.replace('/assessment')
         }

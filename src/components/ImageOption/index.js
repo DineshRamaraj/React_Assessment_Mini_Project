@@ -1,5 +1,5 @@
 const ImageOptions = props => {
-  const {questionList, currentQuestion, currentAnswerId, clickOption} = props
+  const {questionList, currentQuestion, answerId, clickOption} = props
   const {options} = questionList[currentQuestion]
   //   console.log(options)
   const onClickOption = event => {
@@ -14,7 +14,7 @@ const ImageOptions = props => {
             value={eachItem.id}
             type="button"
             className={
-              currentAnswerId === eachItem.id
+              answerId === eachItem.id
                 ? 'active-image-button question-and-answer-image-button'
                 : 'question-and-answer-image-button'
             }

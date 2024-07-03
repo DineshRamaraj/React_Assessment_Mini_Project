@@ -37,7 +37,6 @@ class Assessment extends Component {
     questionNumberList: [],
     questionList: [],
     currentQuestion: 0,
-    currentAnswerId: undefined,
     answeredScore: 0,
     unAnsweredScore: 0,
     score: 0,
@@ -129,12 +128,14 @@ class Assessment extends Component {
           id: uuid(),
           questionNumber: i,
           questionStatus: questionStatus.inProgress,
+          answerId: undefined,
         }
       } else {
         newObject = {
           id: uuid(),
           questionNumber: i,
           questionStatus: questionStatus.initial,
+          answerId: undefined,
         }
       }
       newNumberList.push(newObject)
@@ -143,19 +144,21 @@ class Assessment extends Component {
   }
 
   changeQuestionInitialToProgress = () => {
-    const {currentQuestion, currentAnswerId, questionList} = this.state
+    const {currentQuestion, questionList, questionNumberList} = this.state
+    const {answerId} = questionNumberList[currentQuestion]
 
-    const isSuccessItem = questionList[currentQuestion - 1].options.find(
-      eachOption => eachOption.id === currentAnswerId,
-    )
+    const isSuccessItem = questionList[
+      currentQuestion - 1 < 0 ? 0 : currentQuestion - 1
+    ].options.find(eachOption => eachOption.id === answerId)
+
     const isSuccessId = isSuccessItem ? isSuccessItem.id : undefined
 
     this.setState(prevState => ({
       questionNumberList: prevState.questionNumberList.map(eachItem => {
         if (
           currentQuestion - 1 === eachItem.questionNumber &&
-          isSuccessId === currentAnswerId &&
-          currentAnswerId !== undefined
+          isSuccessId === eachItem.answerId &&
+          eachItem.answerId !== undefined
         ) {
           return {...eachItem, questionStatus: questionStatus.success}
         }
@@ -180,11 +183,14 @@ class Assessment extends Component {
   }
 
   clickOption = event => {
-    const {questionList, currentQuestion, currentAnswerId} = this.state
+    const {questionList, currentQuestion} = this.state
 
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === event.target.id,
     )
+
+    // console.log(event.target.id)
+    // console.log(findItem.text)
 
     if (this.isEnterFirstTime === true) {
       this.isEnterFirstTime = false
@@ -194,109 +200,116 @@ class Assessment extends Component {
       }))
     }
 
-    if (
-      currentAnswerId === undefined &&
-      findItem.isCorrect === 'true' &&
-      this.isCorrect === false
-    ) {
+    if (findItem.isCorrect === 'true' && this.isCorrect === false) {
       this.isCorrect = true
-      const {score} = this.state
-      this.setState({
-        currentAnswerId: event.target.id,
-        score: score + 1,
-      })
-    } else if (
-      currentAnswerId !== undefined &&
-      findItem.isCorrect === 'true' &&
-      this.isCorrect === false
-    ) {
-      this.isCorrect = true
-      const {score} = this.state
-      this.setState({
-        currentAnswerId: event.target.id,
-        score: score + 1,
-      })
+      this.setState(prevState => ({
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: event.target.id}
+          }
+          return eachNumber
+        }),
+
+        score: prevState.score + 1,
+      }))
     } else if (findItem.isCorrect === 'false' && this.isCorrect === true) {
       this.isCorrect = false
       this.setState(prevState => ({
-        currentAnswerId: event.target.id,
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: event.target.id}
+          }
+          return eachNumber
+        }),
         score: prevState.score - 1 < 0 ? 0 : prevState.score - 1,
       }))
     } else {
-      this.setState({currentAnswerId: event.target.id})
+      this.setState(prevState => ({
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: event.target.id}
+          }
+          return eachNumber
+        }),
+      }))
     }
   }
 
   renderDefaultOptions = () => {
-    const {questionList, currentQuestion, currentAnswerId} = this.state
+    const {questionList, currentQuestion, questionNumberList} = this.state
+    const {answerId} = questionNumberList[currentQuestion]
     return (
       <DefaultOptions
         questionList={questionList}
         currentQuestion={currentQuestion}
-        currentAnswerId={currentAnswerId}
+        answerId={answerId}
         clickOption={this.clickOption}
       />
     )
   }
 
   renderImageOptions = () => {
-    const {questionList, currentQuestion, currentAnswerId} = this.state
+    const {questionList, currentQuestion, questionNumberList} = this.state
+    const {answerId} = questionNumberList[currentQuestion]
     return (
       <ImageOptions
         questionList={questionList}
         currentQuestion={currentQuestion}
-        currentAnswerId={currentAnswerId}
+        answerId={answerId}
         clickOption={this.clickOption}
       />
     )
   }
 
   changeOption = valueID => {
-    const {questionList, currentQuestion, currentAnswerId} = this.state
+    const {questionList, currentQuestion} = this.state
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === valueID,
     )
 
-    if (this.isEnterFirstTime === true) {
-      this.isEnterFirstTime = false
-      this.setState(prevState => ({
-        answeredScore: prevState.answeredScore + 1,
-        unAnsweredScore: prevState.unAnsweredScore - 1,
-      }))
-    }
-
-    if (
-      currentAnswerId !== undefined &&
-      findItem.isCorrect === 'true' &&
-      this.isCorrect === false
-    ) {
+    if (findItem.isCorrect === 'true' && this.isCorrect === false) {
       this.isCorrect = true
       this.setState(prevState => ({
-        currentAnswerId: valueID,
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: valueID}
+          }
+          return eachNumber
+        }),
+
         score: prevState.score + 1,
       }))
-    } else if (
-      findItem.isCorrect === 'false' &&
-      currentAnswerId !== undefined &&
-      this.isCorrect === true
-    ) {
+    } else if (findItem.isCorrect === 'false' && this.isCorrect === true) {
       this.isCorrect = false
       this.setState(prevState => ({
-        currentAnswerId: valueID,
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: valueID}
+          }
+          return eachNumber
+        }),
         score: prevState.score - 1 < 0 ? 0 : prevState.score - 1,
       }))
     } else {
-      this.setState({currentAnswerId: valueID})
+      this.setState(prevState => ({
+        questionNumberList: prevState.questionNumberList.map(eachNumber => {
+          if (eachNumber.questionNumber === currentQuestion) {
+            return {...eachNumber, answerId: valueID}
+          }
+          return eachNumber
+        }),
+      }))
     }
   }
 
   renderSingleSelectOptions = () => {
-    const {questionList, currentQuestion, currentAnswerId} = this.state
+    const {questionList, currentQuestion, questionNumberList} = this.state
+    const {answerId} = questionNumberList[currentQuestion]
     return (
       <SingleSelect
         questionList={questionList}
         currentQuestion={currentQuestion}
-        currentAnswerId={currentAnswerId}
+        answerId={answerId}
         changeOption={this.changeOption}
       />
     )
@@ -334,11 +347,12 @@ class Assessment extends Component {
       this.setState(
         prevState => ({
           currentQuestion: prevState.currentQuestion + 1,
+          answeredScore: prevState.answeredScore + 1,
+          unAnsweredScore: prevState.unAnsweredScore - 1,
         }),
         this.changeQuestionInitialToProgress,
       )
       setTimeout(() => {
-        this.setState({currentAnswerId: selectItemId})
         this.changeOption(selectItemId)
       }, 10)
     } else {
@@ -359,7 +373,12 @@ class Assessment extends Component {
     if (optionsType === 'SINGLE_SELECT') {
       const selectItemId = options[0].id
       this.setState(
-        {currentQuestion: questionNumber, currentAnswerId: selectItemId},
+        prevState => ({
+          currentQuestion: questionNumber,
+          questionNumberList: {answerId: selectItemId},
+          answeredScore: prevState.answeredScore + 1,
+          unAnsweredScore: prevState.unAnsweredScore - 1,
+        }),
         this.changeQuestionInitialToProgress,
       )
       setTimeout(() => {
@@ -477,7 +496,6 @@ class Assessment extends Component {
         questionNumberList: [],
         questionList: [],
         currentQuestion: 0,
-        currentAnswerId: undefined,
         answeredScore: 0,
         unAnsweredScore: 0,
         score: 0,

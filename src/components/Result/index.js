@@ -13,10 +13,9 @@ const Result = props => {
   return (
     <ContextContainer.Consumer>
       {value => {
-        const {score, resultTime, clickReattempt} = value
+        const {score, resultTime} = value
 
         const onClickReattempt = () => {
-          clickReattempt()
           const {history} = props
           history.replace('/assessment')
         }
