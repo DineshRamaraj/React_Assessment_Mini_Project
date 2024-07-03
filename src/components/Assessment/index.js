@@ -47,8 +47,6 @@ class Assessment extends Component {
 
   isCorrect = false
 
-  isEnterFirstTime = true
-
   componentDidMount() {
     this.triggerTime()
     this.getQuestionsList()
@@ -145,7 +143,9 @@ class Assessment extends Component {
 
   changeQuestionInitialToProgress = () => {
     const {currentQuestion, questionList, questionNumberList} = this.state
-    const {answerId} = questionNumberList[currentQuestion]
+    const {answerId} = questionNumberList[
+      currentQuestion - 1 < 0 ? 0 : currentQuestion - 1
+    ]
 
     const isSuccessItem = questionList[
       currentQuestion - 1 < 0 ? 0 : currentQuestion - 1
@@ -183,17 +183,17 @@ class Assessment extends Component {
   }
 
   clickOption = event => {
-    const {questionList, currentQuestion} = this.state
+    const {questionList, currentQuestion, questionNumberList} = this.state
 
     const findItem = questionList[currentQuestion].options.find(
       eachItem => eachItem.id === event.target.id,
     )
 
+    const {answerId} = questionNumberList[currentQuestion]
     // console.log(event.target.id)
     // console.log(findItem.text)
 
-    if (this.isEnterFirstTime === true) {
-      this.isEnterFirstTime = false
+    if (answerId === undefined) {
       this.setState(prevState => ({
         answeredScore: prevState.answeredScore + 1,
         unAnsweredScore: prevState.unAnsweredScore - 1,
@@ -276,7 +276,6 @@ class Assessment extends Component {
           }
           return eachNumber
         }),
-
         score: prevState.score + 1,
       }))
     } else if (findItem.isCorrect === 'false' && this.isCorrect === true) {
@@ -366,24 +365,37 @@ class Assessment extends Component {
   }
 
   clickQuestionNumber = questionNumber => {
-    const {questionList} = this.state
+    const {questionList, questionNumberList} = this.state
     const {optionsType, options} = questionList[questionNumber]
     // console.log(questionList[questionNumber])
 
     if (optionsType === 'SINGLE_SELECT') {
-      const selectItemId = options[0].id
-      this.setState(
-        prevState => ({
-          currentQuestion: questionNumber,
-          questionNumberList: {answerId: selectItemId},
-          answeredScore: prevState.answeredScore + 1,
-          unAnsweredScore: prevState.unAnsweredScore - 1,
-        }),
-        this.changeQuestionInitialToProgress,
-      )
-      setTimeout(() => {
-        this.changeOption(selectItemId)
-      }, 10)
+      const {answerId} = questionNumberList[questionNumber]
+      let selectItemId
+      if (answerId === undefined) {
+        selectItemId = options[0].id
+        this.setState(
+          prevState => ({
+            currentQuestion: questionNumber,
+            answeredScore: prevState.answeredScore + 1,
+            unAnsweredScore: prevState.unAnsweredScore - 1,
+          }),
+          this.changeQuestionInitialToProgress,
+        )
+        setTimeout(() => {
+          this.changeOption(selectItemId)
+        }, 10)
+      } else {
+        selectItemId = answerId
+
+        this.setState(
+          {currentQuestion: questionNumber},
+          this.changeQuestionInitialToProgress,
+        )
+        setTimeout(() => {
+          this.changeOption(selectItemId)
+        }, 10)
+      }
     } else {
       this.setState(
         {currentQuestion: questionNumber},
@@ -432,10 +444,7 @@ class Assessment extends Component {
         <Header />
         <ul className="main-assessment-container">
           <li className="main-side-container">{this.SideContainer()}</li>
-          <li
-            className="question-and-answer-container"
-            data-testid="questionItem"
-          >
+          <li className="question-and-answer-container">
             <div className="question-choice-container">
               <div className="question-number-and-text-container">
                 <span className="question-number">{currentQuestion + 1}.</span>

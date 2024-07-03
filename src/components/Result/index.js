@@ -60,7 +60,7 @@ const Result = props => {
                   </p>
                 </div>
                 <div className="result-score-container">
-                  <p className="result-score-title">Your score: </p>
+                  <p className="result-score-title">Your Score: </p>
                   <p className="result-score">{score}</p>
                 </div>
                 <button

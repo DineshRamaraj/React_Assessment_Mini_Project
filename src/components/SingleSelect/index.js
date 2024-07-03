@@ -10,7 +10,7 @@ const SingleSelect = props => {
     selectAnswerId = options[0].id
   }
 
-  console.log(selectAnswerId)
+  //   console.log(selectAnswerId)
 
   const onChangeSelectItem = event => {
     changeOption(event.target.value)
