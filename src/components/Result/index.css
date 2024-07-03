@@ -55,18 +55,20 @@
 }
 
 .result-score-title {
-  font-size: 24px;
+  font-size: 28px;
   font-family: 'Roboto';
+  font-weight: bold;
   color: #164687;
   margin: 5px 0;
 }
 
 .result-score {
-  font-size: 36px;
+  font-size: 52px;
   font-family: 'Roboto';
+  font-weight: bold;
   color: #044682;
-  margin: 5px 0;
-  /* margin-left: 10px; */
+  margin: 20px 0;
+  margin-left: 15px;
 }
 
 .result-button {

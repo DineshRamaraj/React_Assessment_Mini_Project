@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom'
 
 const SideContainer = props => {
   const {
+    score,
     displayTime,
     answeredScore,
     unAnsweredScore,
@@ -9,12 +10,11 @@ const SideContainer = props => {
     questionLength,
     clickQuestionNumber,
     questionStatus,
-    clickSubmit,
   } = props
 
-  const onClickSubmit = () => {
-    clickSubmit()
-  }
+  //   const onClickSubmit = () => {
+  //     clickSubmit()
+  //   }
 
   const hours = `${parseInt(displayTime / 60 / 60) > 9 ? '' : '0'}${parseInt(
     displayTime / 60 / 60,
@@ -91,12 +91,8 @@ const SideContainer = props => {
         </div>
       </div>
       <div className="submit-button-container">
-        <Link to="/results">
-          <button
-            type="button"
-            className="submit-assessment-button"
-            onClick={onClickSubmit}
-          >
+        <Link to={{pathname: '/results', score, displayTime}}>
+          <button type="button" className="submit-assessment-button">
             Submit Assessment
           </button>
         </Link>

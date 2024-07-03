@@ -3,14 +3,14 @@ import {v4 as uuid} from 'uuid'
 import Loader from 'react-loader-spinner'
 import {Redirect} from 'react-router-dom'
 import {Component} from 'react'
+
 import Header from '../Header'
 import Failure from '../Failure'
-import ContextContainer from '../../Context/ContextComponent'
-import './index.css'
 import SingleSelect from '../SingleSelect'
 import ImageOptions from '../ImageOption'
 import DefaultOptions from '../DefaultOptions'
 import SideContainer from '../SideContainer'
+import './index.css'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -47,9 +47,12 @@ class Assessment extends Component {
 
   isCorrect = false
 
+  //   isFailure = apiStatusConstants.failure
+
   componentDidMount() {
     this.triggerTime()
     this.getQuestionsList()
+    // this.isFailure = apiStatusConstants.success
   }
 
   componentWillUnmount() {
@@ -64,10 +67,8 @@ class Assessment extends Component {
           const {score, displayTime} = this.state
           if (displayTime === 0) {
             clearInterval(this.interval)
-            const {submitAnswer} = this.context
-            submitAnswer(score, displayTime)
             const {history} = this.props
-            history.replace('/results')
+            history.replace('/results', {score, displayTime})
           }
         },
       )
@@ -106,7 +107,7 @@ class Assessment extends Component {
         })),
       }))
       this.numberOfQuestions(updatedData.length)
-      // console.log(updatedData)
+      console.log(updatedData)
       this.setState({
         questionList: updatedData,
         apiStatus: apiStatusConstants.success,
@@ -404,14 +405,15 @@ class Assessment extends Component {
     }
   }
 
-  clickSubmit = () => {
-    const {score, displayTime} = this.state
-    const {submitAnswer} = this.context
-    submitAnswer(score, displayTime)
-  }
+  //   clickSubmit = () => {
+  //     const {score, displayTime} = this.state
+  //     const {submitAnswer} = this.context
+  //     submitAnswer(score, displayTime)
+  //   }
 
   SideContainer = () => {
     const {
+      score,
       displayTime,
       answeredScore,
       unAnsweredScore,
@@ -422,6 +424,7 @@ class Assessment extends Component {
     const questionLength = questionList.length
     return (
       <SideContainer
+        score={score}
         displayTime={displayTime}
         answeredScore={answeredScore}
         questionLength={questionLength}
@@ -429,7 +432,6 @@ class Assessment extends Component {
         unAnsweredScore={unAnsweredScore}
         questionNumberList={questionNumberList}
         clickQuestionNumber={this.clickQuestionNumber}
-        clickSubmit={this.clickSubmit}
       />
     )
   }
@@ -513,8 +515,6 @@ class Assessment extends Component {
       this.getQuestionsList,
       this.triggerTime,
     )
-    const {submitAnswer} = this.context
-    submitAnswer(0, 0)
   }
 
   renderFailure = () => <Failure onRetry={this.onRetry} />
@@ -538,7 +538,5 @@ class Assessment extends Component {
     }
   }
 }
-
-Assessment.contextType = ContextContainer
 
 export default Assessment

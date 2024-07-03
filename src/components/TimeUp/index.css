@@ -41,17 +41,20 @@
 }
 
 .time-up-score-title {
-  font-size: 24px;
+  font-size: 28px;
   font-family: 'Roboto';
+  font-weight: bold;
   color: #164687;
-  margin: 0;
+  margin: 5px 0;
 }
 
 .time-up-score {
-  font-size: 36px;
+  font-size: 52px;
   font-family: 'Roboto';
+  font-weight: bold;
   color: #044682;
-  margin: 0;
+  margin: 20px 0;
+  margin-left: 15px;
 }
 
 .time-up-button {
