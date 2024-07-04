@@ -19,7 +19,7 @@ const Result = props => {
   let propsValue
   if (location.state) propsValue = location.state
   else propsValue = location
-
+  //   console.log(propsValue)
   const {score, displayTime} = propsValue
 
   if (displayTime === 0) {
@@ -61,7 +61,7 @@ const Result = props => {
             <p className="result-time">{`${hours}:${minutes}:${seconds}`}</p>
           </div>
           <div className="result-score-container">
-            <p className="result-score-title">Your Score: </p>
+            <p className="result-score-title">Your Score : </p>
             <p className="result-score">{totalScore}</p>
           </div>
           <button

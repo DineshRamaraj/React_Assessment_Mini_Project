@@ -183,11 +183,11 @@ class Assessment extends Component {
     }))
   }
 
-  clickOption = event => {
+  clickOption = valueID => {
     const {questionList, currentQuestion, questionNumberList} = this.state
 
     const findItem = questionList[currentQuestion].options.find(
-      eachItem => eachItem.id === event.target.id,
+      eachItem => eachItem.id === valueID,
     )
 
     const {answerId} = questionNumberList[currentQuestion]
@@ -206,7 +206,7 @@ class Assessment extends Component {
       this.setState(prevState => ({
         questionNumberList: prevState.questionNumberList.map(eachNumber => {
           if (eachNumber.questionNumber === currentQuestion) {
-            return {...eachNumber, answerId: event.target.id}
+            return {...eachNumber, answerId: valueID}
           }
           return eachNumber
         }),
@@ -218,7 +218,7 @@ class Assessment extends Component {
       this.setState(prevState => ({
         questionNumberList: prevState.questionNumberList.map(eachNumber => {
           if (eachNumber.questionNumber === currentQuestion) {
-            return {...eachNumber, answerId: event.target.id}
+            return {...eachNumber, answerId: valueID}
           }
           return eachNumber
         }),
@@ -228,7 +228,7 @@ class Assessment extends Component {
       this.setState(prevState => ({
         questionNumberList: prevState.questionNumberList.map(eachNumber => {
           if (eachNumber.questionNumber === currentQuestion) {
-            return {...eachNumber, answerId: event.target.id}
+            return {...eachNumber, answerId: valueID}
           }
           return eachNumber
         }),

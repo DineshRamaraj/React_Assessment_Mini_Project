@@ -2,9 +2,13 @@ const ImageOptions = props => {
   const {questionList, currentQuestion, answerId, clickOption} = props
   const {options} = questionList[currentQuestion]
   //   console.log(options)
-  const onClickOption = event => {
-    clickOption(event)
-  }
+  //   const onClickOption = id => {
+  //     // const selectOption = event.target.id
+  //     // console.log(selectOption)
+  //     console.log(id)
+  //     clickOption(id)
+  //   }
+
   return (
     <ul className="question-image-container">
       {options.map(eachItem => (
@@ -18,7 +22,7 @@ const ImageOptions = props => {
                 ? 'active-image-button question-and-answer-image-button'
                 : 'question-and-answer-image-button'
             }
-            onClick={onClickOption}
+            onClick={() => clickOption(eachItem.id)}
           >
             <img
               id={eachItem.id}

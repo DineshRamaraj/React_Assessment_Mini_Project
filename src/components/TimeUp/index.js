@@ -15,6 +15,8 @@ const TimeUp = props => {
     history.replace('/assessment')
   }
 
+  const totalScore = score || 0
+
   return (
     <>
       <Header />
@@ -30,8 +32,8 @@ const TimeUp = props => {
             You did not complete the assessment within the time
           </p>
           <div className="time-up-score-container">
-            <p className="time-up-score-title">Your Score: </p>
-            <p className="time-up-score">{score}</p>
+            <p className="time-up-score-title">Your Score : </p>
+            <p className="time-up-score">{totalScore}</p>
           </div>
           <button
             type="button"

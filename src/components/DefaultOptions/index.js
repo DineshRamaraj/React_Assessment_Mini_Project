@@ -2,9 +2,11 @@ const DefaultOptions = props => {
   const {questionList, currentQuestion, answerId, clickOption} = props
   const {options} = questionList[currentQuestion]
 
-  const onClickOption = event => {
-    clickOption(event)
-  }
+  //   const onClickOption = id => {
+  //     // console.log(event.target.value)
+  //     console.log(id)
+  //     clickOption(id)
+  //   }
 
   return (
     <ul className="question-default-container">
@@ -19,7 +21,7 @@ const DefaultOptions = props => {
                 ? 'active-default-button question-and-answer-default-button'
                 : 'question-and-answer-default-button'
             }
-            onClick={onClickOption}
+            onClick={() => clickOption(eachItem.id)}
           >
             {eachItem.text}
           </button>
