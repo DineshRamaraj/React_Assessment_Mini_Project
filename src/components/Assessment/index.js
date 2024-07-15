@@ -370,6 +370,7 @@ class Assessment extends Component {
     const {optionsType, options} = questionList[questionNumber]
     // console.log(questionList[questionNumber])
 
+    this.isCorrect = false
     if (optionsType === 'SINGLE_SELECT') {
       const {answerId} = questionNumberList[questionNumber]
       let selectItemId
